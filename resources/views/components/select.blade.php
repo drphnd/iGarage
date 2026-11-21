@@ -1,6 +1,6 @@
 {{--
     Dropdown with label and validation message.
-    <x-select label="Tipe garasi" name="type" :options="['car' => 'Mobil', 'electric' => 'Mobil Listrik']" placeholder="Pilih tipe" />
+    <x-select label="Garage type" name="type" :options="['car' => 'Car', 'electric' => 'Electric']" placeholder="Choose a type" />
 --}}
 @props(['label', 'name', 'options' => [], 'value' => null, 'placeholder' => null, 'hint' => null])
 

@@ -1,6 +1,6 @@
 {{-- Layout for login, register and the verification page: one centered card, no navbar. --}}
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +15,6 @@
         @yield('content')
     </div>
 
-    <p class="mt-10 text-[12px] text-ink-soft">© {{ date('Y') }} iGarage · Sewa garasi kendaraan</p>
+    <p class="mt-10 text-[12px] text-ink-soft">© {{ date('Y') }} iGarage · Vehicle garage rental</p>
 </body>
 </html>

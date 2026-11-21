@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * Builds users for tests. By default an approved tenant.
+ * Builds users for tests. By default an approved renter.
  *
- * User::factory()->create()            approved tenant
- * User::factory()->pending()->create() tenant waiting for verification
+ * User::factory()->create()            approved renter
+ * User::factory()->pending()->create() renter waiting for verification
  * User::factory()->rejected()->create()
  * User::factory()->admin()->create()
  *
@@ -37,7 +37,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
-            'role' => User::ROLE_TENANT,
+            'role' => User::ROLE_RENTER,
             'nik' => fake()->unique()->numerify('################'),
             'phone' => fake()->numerify('08##########'),
             'verification_status' => User::STATUS_APPROVED,
@@ -45,7 +45,7 @@ class UserFactory extends Factory
     }
 
     /**
-     * Tenant waiting for admin verification.
+     * Renter waiting for admin verification.
      */
     public function pending(): static
     {
@@ -53,7 +53,7 @@ class UserFactory extends Factory
     }
 
     /**
-     * Tenant whose registration was rejected.
+     * Renter whose registration was rejected.
      */
     public function rejected(): static
     {

@@ -13,7 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * An iGarage account: either an admin or a tenant.
+ * An iGarage account: either an admin or a renter.
  *
  * role and verification_status are intentionally not fillable,
  * so a registration form can never make someone an admin or approve itself.
@@ -21,8 +21,8 @@ use Illuminate\Notifications\Notifiable;
  * @property int $id
  * @property string $name
  * @property string $email
- * @property string $role                 admin | tenant
- * @property string|null $nik             16-digit Indonesian ID number (tenants only)
+ * @property string $role                 admin | renter
+ * @property string|null $nik             16-digit Indonesian ID number (renters only)
  * @property string|null $phone
  * @property string $verification_status  pending | approved | rejected
  */
@@ -34,7 +34,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     public const ROLE_ADMIN = 'admin';
-    public const ROLE_TENANT = 'tenant';
+    public const ROLE_RENTER = 'renter';
 
     public const STATUS_PENDING = 'pending';
     public const STATUS_APPROVED = 'approved';
@@ -54,7 +54,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Vehicles owned by this tenant.
+     * Vehicles owned by this renter.
      *
      * @return HasMany<Ride, $this>
      */
@@ -64,7 +64,7 @@ class User extends Authenticatable
     }
 
     /**
-     * All rents of this tenant, reached through their vehicles (users → rides → rents).
+     * All rents of this renter, reached through their vehicles (users → rides → rents).
      *
      * @return HasManyThrough<Rent, Ride, $this>
      */
@@ -84,7 +84,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Whether this tenant has been approved by an admin. Admins are always treated as approved.
+     * Whether this renter has been approved by an admin. Admins are always treated as approved.
      *
      * @return bool
      */

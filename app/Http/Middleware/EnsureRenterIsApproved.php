@@ -7,12 +7,12 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Blocks tenants whose registration is still pending or was rejected.
+ * Blocks renters whose registration is still pending or was rejected.
  *
  * They are redirected to the verification page, which only offers a logout button.
  * Admins always pass. Registered as the 'approved' alias in bootstrap/app.php.
  */
-class EnsureTenantIsApproved
+class EnsureRenterIsApproved
 {
     /**
      * @param  Request  $request

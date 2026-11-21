@@ -10,7 +10,7 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
 /**
- * Login, tenant registration, logout, and the verification (blocked) page.
+ * Login, renter registration, logout, and the verification (blocked) page.
  */
 class AuthController
 {
@@ -36,14 +36,14 @@ class AuthController
             'email' => ['required', 'email'],
             'password' => ['required'],
         ], [
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'password.required' => 'Password wajib diisi.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'password.required' => 'Password is required.',
         ]);
 
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()
-                ->withErrors(['email' => 'Email atau password salah.'])
+                ->withErrors(['email' => 'The email or password is incorrect.'])
                 ->onlyInput('email');
         }
 
@@ -54,7 +54,7 @@ class AuthController
     }
 
     /**
-     * Show the tenant registration form.
+     * Show the renter registration form.
      *
      * @return View
      */
@@ -64,7 +64,7 @@ class AuthController
     }
 
     /**
-     * Register a new tenant. The account starts as "pending" until an admin approves it.
+     * Register a new renter. The account starts as "pending" until an admin approves it.
      *
      * @param  Request  $request
      * @return RedirectResponse  to the verification page
@@ -78,21 +78,21 @@ class AuthController
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::min(8)],
         ], [
-            'nik.required' => 'NIK wajib diisi.',
-            'nik.digits' => 'NIK harus 16 digit angka.',
-            'nik.unique' => 'NIK ini sudah terdaftar.',
-            'name.required' => 'Nama lengkap wajib diisi.',
-            'phone.required' => 'Nomor telepon wajib diisi.',
-            'phone.regex' => 'Nomor telepon harus diawali 0 dan berisi 10 sampai 15 angka.',
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email ini sudah terdaftar.',
-            'password.required' => 'Password wajib diisi.',
-            'password.confirmed' => 'Konfirmasi password tidak sama.',
-            'password.min' => 'Password minimal 8 karakter.',
+            'nik.required' => 'NIK is required.',
+            'nik.digits' => 'NIK must be exactly 16 digits.',
+            'nik.unique' => 'This NIK is already registered.',
+            'name.required' => 'Full name is required.',
+            'phone.required' => 'Phone number is required.',
+            'phone.regex' => 'Phone number must start with 0 and contain 10 to 15 digits.',
+            'email.required' => 'Email is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.unique' => 'This email is already registered.',
+            'password.required' => 'Password is required.',
+            'password.confirmed' => 'Password confirmation does not match.',
+            'password.min' => 'Password must be at least 8 characters.',
         ]);
 
-        // role (tenant) and verification_status (pending) come from the database defaults,
+        // role (renter) and verification_status (pending) come from the database defaults,
         // they are not fillable so the form cannot change them.
         $user = User::create($data);
 
@@ -103,7 +103,7 @@ class AuthController
     }
 
     /**
-     * Show the "waiting for verification" or "rejected" page to tenants who are not approved.
+     * Show the "waiting for verification" or "rejected" page to renters who are not approved.
      *
      * @param  Request  $request
      * @return View|RedirectResponse  approved users are sent home instead
@@ -132,6 +132,6 @@ class AuthController
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('success', 'Kamu sudah logout.');
+        return redirect()->route('login')->with('success', 'You have been logged out.');
     }
 }

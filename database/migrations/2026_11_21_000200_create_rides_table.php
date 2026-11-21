@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Vehicles owned by tenants.
+ * Vehicles owned by renters.
  *
  * plate_number is null for bicycles.
  * battery_capacity_kwh is only filled for electric cars.

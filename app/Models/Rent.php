@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * A garage rent made by a tenant for one vehicle in one garage.
+ * A garage rent made by a renter for one vehicle in one garage.
  *
  * The garage is occupied from start_date until (not including) end_date.
  *

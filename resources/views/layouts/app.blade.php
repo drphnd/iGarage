@@ -1,6 +1,6 @@
 {{-- Layout for signed-in pages: translucent navbar + centered content. --}}
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,14 +14,14 @@
         // Menu per role. Links whose route does not exist yet are skipped automatically.
         $menu = match (true) {
             $user->isAdmin() => [
-                ['label' => 'Garasi', 'route' => 'admin.garages.index', 'active' => 'admin.garages.*'],
-                ['label' => 'Verifikasi Tenant', 'route' => 'admin.tenants.index', 'active' => 'admin.tenants.*'],
-                ['label' => 'Perpanjangan', 'route' => 'admin.extends.index', 'active' => 'admin.extends.*'],
-                ['label' => 'Laporan', 'route' => 'admin.reports.index', 'active' => 'admin.reports.*'],
+                ['label' => 'Garages', 'route' => 'admin.garages.index', 'active' => 'admin.garages.*'],
+                ['label' => 'Renter Verification', 'route' => 'admin.renters.index', 'active' => 'admin.renters.*'],
+                ['label' => 'Extensions', 'route' => 'admin.extends.index', 'active' => 'admin.extends.*'],
+                ['label' => 'Reports', 'route' => 'admin.reports.index', 'active' => 'admin.reports.*'],
             ],
             $user->isApproved() => [
-                ['label' => 'Sewa Saya', 'route' => 'my-rents', 'active' => 'my-rents'],
-                ['label' => 'Sewa Garasi Baru', 'route' => 'rents.create', 'active' => 'rents.*'],
+                ['label' => 'My Rents', 'route' => 'my-rents', 'active' => 'my-rents'],
+                ['label' => 'Rent a Garage', 'route' => 'rents.create', 'active' => 'rents.*'],
             ],
             default => [],
         };
@@ -43,7 +43,7 @@
 
             <div class="ml-auto flex items-center gap-4 text-[13px]">
                 <span class="text-ink-soft">{{ $user->name }}</span>
-                <x-badge :color="$user->isAdmin() ? 'blue' : 'gray'">{{ $user->isAdmin() ? 'Admin' : 'Tenant' }}</x-badge>
+                <x-badge :color="$user->isAdmin() ? 'blue' : 'gray'">{{ $user->isAdmin() ? 'Admin' : 'Renter' }}</x-badge>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="text-accent transition hover:underline">Logout</button>

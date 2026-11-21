@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class HomeController
 {
     /**
-     * Admin → garage list, approved tenant → My Rents, other tenants → verification page.
+     * Admin → garage list, approved renter → My Rents, other renters → verification page.
      *
      * @param  Request  $request
      * @return RedirectResponse

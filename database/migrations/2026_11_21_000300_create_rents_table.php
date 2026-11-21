@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Garage rents made by tenants. Resolves the many-to-many between rides and garages.
+ * Garage rents made by renters. Resolves the many-to-many between rides and garages.
  *
  * The garage is occupied from start_date until (not including) end_date.
  * end_date is updated by the admin when a rent is extended.

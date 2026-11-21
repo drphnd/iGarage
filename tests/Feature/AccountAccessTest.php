@@ -15,7 +15,7 @@ test('login and register pages can be opened', function () {
     $this->get(route('register'))->assertOk();
 });
 
-test('valid registration creates a pending tenant and shows the verification page', function () {
+test('valid registration creates a pending renter and shows the verification page', function () {
     $response = $this->post(route('register'), [
         'nik' => '3578010101990009',
         'name' => 'Citra Lestari',
@@ -28,7 +28,7 @@ test('valid registration creates a pending tenant and shows the verification pag
     $response->assertRedirect(route('account.verification'));
 
     $user = User::where('email', 'citra@example.com')->first();
-    expect($user->role)->toBe(User::ROLE_TENANT)
+    expect($user->role)->toBe(User::ROLE_RENTER)
         ->and($user->verification_status)->toBe(User::STATUS_PENDING);
 });
 
@@ -48,47 +48,47 @@ test('registration is rejected when NIK is not 16 digits', function () {
 test('registration cannot make the user an admin', function () {
     $this->post(route('register'), [
         'nik' => '3578010101990010',
-        'name' => 'Penyusup',
+        'name' => 'Intruder',
         'phone' => '081234567800',
-        'email' => 'penyusup@example.com',
+        'email' => 'intruder@example.com',
         'password' => 'password123',
         'password_confirmation' => 'password123',
         'role' => 'admin',
         'verification_status' => 'approved',
     ]);
 
-    $user = User::where('email', 'penyusup@example.com')->first();
-    expect($user->role)->toBe(User::ROLE_TENANT)
+    $user = User::where('email', 'intruder@example.com')->first();
+    expect($user->role)->toBe(User::ROLE_RENTER)
         ->and($user->verification_status)->toBe(User::STATUS_PENDING);
 });
 
-test('pending tenant is blocked and sent to the verification page', function () {
-    $tenant = User::factory()->pending()->create();
+test('pending renter is blocked and sent to the verification page', function () {
+    $renter = User::factory()->pending()->create();
 
-    $this->actingAs($tenant)->get(route('my-rents'))->assertRedirect(route('account.verification'));
-    $this->actingAs($tenant)->get(route('account.verification'))->assertOk()->assertSee('sedang diverifikasi');
+    $this->actingAs($renter)->get(route('my-rents'))->assertRedirect(route('account.verification'));
+    $this->actingAs($renter)->get(route('account.verification'))->assertOk()->assertSee('being verified');
 });
 
-test('rejected tenant sees the rejected message', function () {
-    $tenant = User::factory()->rejected()->create();
+test('rejected renter sees the rejected message', function () {
+    $renter = User::factory()->rejected()->create();
 
-    $this->actingAs($tenant)->get(route('account.verification'))->assertOk()->assertSee('ditolak');
+    $this->actingAs($renter)->get(route('account.verification'))->assertOk()->assertSee('was rejected');
 });
 
-test('approved tenant can open My Rents and starts there', function () {
-    $tenant = User::factory()->create();
+test('approved renter can open My Rents and starts there', function () {
+    $renter = User::factory()->create();
 
-    $this->actingAs($tenant)->get('/')->assertRedirect(route('my-rents'));
-    $this->actingAs($tenant)->get(route('my-rents'))->assertOk();
+    $this->actingAs($renter)->get('/')->assertRedirect(route('my-rents'));
+    $this->actingAs($renter)->get(route('my-rents'))->assertOk();
 });
 
-test('tenant cannot open admin pages', function () {
-    $tenant = User::factory()->create();
+test('renter cannot open admin pages', function () {
+    $renter = User::factory()->create();
 
-    $this->actingAs($tenant)->get(route('admin.garages.index'))->assertForbidden();
+    $this->actingAs($renter)->get(route('admin.garages.index'))->assertForbidden();
 });
 
-test('admin starts on the garage list and cannot open tenant pages', function () {
+test('admin starts on the garage list and cannot open renter pages', function () {
     $admin = User::factory()->admin()->create();
 
     $this->actingAs($admin)->get('/')->assertRedirect(route('admin.garages.index'));

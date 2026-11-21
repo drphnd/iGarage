@@ -1,7 +1,7 @@
 {{--
     Page title block.
-    <x-page-header eyebrow="Admin" title="Garasi" subtitle="Semua unit garasi dan statusnya hari ini.">
-        <x-button href="...">Buat Garasi</x-button>   (optional actions on the right)
+    <x-page-header eyebrow="Admin" title="Garages" subtitle="Every garage unit and its status today.">
+        <x-button href="...">Create Garages</x-button>   (optional actions on the right)
     </x-page-header>
 --}}
 @props(['title', 'eyebrow' => null, 'subtitle' => null])

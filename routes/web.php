@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\TenantController;
+use App\Http\Controllers\Admin\RenterController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +20,7 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Signed in: every role, including tenants that are not approved yet
+| Signed in: every role, including renters that are not approved yet
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
@@ -31,11 +31,11 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Tenant: signed in, role tenant, and approved by an admin
+| Renter: signed in, role renter, and approved by an admin
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:tenant', 'approved'])->group(function () {
-    Route::view('/my-rents', 'tenant.rents.index')->name('my-rents');   // placeholder, replaced later
+Route::middleware(['auth', 'role:renter', 'approved'])->group(function () {
+    Route::view('/my-rents', 'renter.rents.index')->name('my-rents');   // placeholder, replaced later
 });
 
 /*
@@ -46,8 +46,8 @@ Route::middleware(['auth', 'role:tenant', 'approved'])->group(function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::view('/garages', 'admin.garages.index')->name('garages.index');   // placeholder, replaced later
 
-    // Tenant verification
-    Route::get('/tenants', [TenantController::class, 'index'])->name('tenants.index');
-    Route::patch('/tenants/{tenant}/approve', [TenantController::class, 'approve'])->name('tenants.approve');
-    Route::patch('/tenants/{tenant}/reject', [TenantController::class, 'reject'])->name('tenants.reject');
+    // Renter verification
+    Route::get('/renters', [RenterController::class, 'index'])->name('renters.index');
+    Route::patch('/renters/{renter}/approve', [RenterController::class, 'approve'])->name('renters.approve');
+    Route::patch('/renters/{renter}/reject', [RenterController::class, 'reject'])->name('renters.reject');
 });

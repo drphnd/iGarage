@@ -1,19 +1,21 @@
-{{-- Layout halaman error. Sengaja berdiri sendiri (tanpa navbar & Vite) supaya tetap tampil walau ada masalah lain. --}}
+{{-- Error page layout. Stands alone (no navbar, no Vite) so it still renders when something else is broken. --}}
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title')</title>
+    <title>@yield('title') · iGarage</title>
     <style>
         body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
-               font-family: system-ui, sans-serif; background: #f3f4f6; color: #1f2937; }
-        .box { text-align: center; padding: 2rem; }
-        .code { font-size: 4rem; font-weight: 800; color: #9ca3af; margin: 0; }
-        h1 { margin: .5rem 0; font-size: 1.5rem; }
-        p { color: #6b7280; }
-        a { display: inline-block; margin-top: 1rem; padding: .6rem 1.2rem; border-radius: .5rem;
-            background: #2563eb; color: #fff; text-decoration: none; }
+               font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+               background: #f5f5f7; color: #1d1d1f; -webkit-font-smoothing: antialiased; }
+        .box { text-align: center; padding: 2rem; max-width: 28rem; }
+        .code { font-size: 5rem; font-weight: 600; letter-spacing: -0.04em; color: #d2d2d7; margin: 0; }
+        h1 { margin: .25rem 0 .5rem; font-size: 2rem; font-weight: 600; letter-spacing: -0.02em; }
+        p { color: #6e6e73; font-size: 17px; line-height: 1.5; }
+        a { display: inline-block; margin-top: 1.5rem; padding: .7rem 1.4rem; border-radius: 999px;
+            background: #0071e3; color: #fff; text-decoration: none; font-size: 14px; font-weight: 500; }
+        a:hover { background: #0077ed; }
     </style>
 </head>
 <body>
@@ -21,7 +23,7 @@
         <p class="code">@yield('code')</p>
         <h1>@yield('title')</h1>
         <p>@yield('message')</p>
-        <a href="{{ url('/') }}">Kembali ke Beranda</a>
+        <a href="{{ url('/') }}">Back to Home</a>
     </div>
 </body>
 </html>

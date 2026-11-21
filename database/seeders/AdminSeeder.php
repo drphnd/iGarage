@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Hash;
  *
  * Accounts (password: "password"):
  *   admin@igarage.test    admin
- *   tenant@igarage.test   tenant, approved
- *   pending@igarage.test  tenant, waiting for verification
+ *   renter@igarage.test   renter, approved
+ *   pending@igarage.test  renter, waiting for verification
  */
 class AdminSeeder extends Seeder
 {
@@ -24,9 +24,9 @@ class AdminSeeder extends Seeder
         $accounts = [
             ['name' => 'Administrator', 'email' => 'admin@igarage.test', 'role' => User::ROLE_ADMIN,
                 'nik' => null, 'phone' => null, 'status' => User::STATUS_APPROVED],
-            ['name' => 'Budi Santoso', 'email' => 'tenant@igarage.test', 'role' => User::ROLE_TENANT,
+            ['name' => 'Budi Santoso', 'email' => 'renter@igarage.test', 'role' => User::ROLE_RENTER,
                 'nik' => '3578010101990001', 'phone' => '081234567890', 'status' => User::STATUS_APPROVED],
-            ['name' => 'Adi Pratama', 'email' => 'pending@igarage.test', 'role' => User::ROLE_TENANT,
+            ['name' => 'Adi Pratama', 'email' => 'pending@igarage.test', 'role' => User::ROLE_RENTER,
                 'nik' => '3578010101990002', 'phone' => '081234567891', 'status' => User::STATUS_PENDING],
         ];
 

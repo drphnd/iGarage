@@ -1,7 +1,7 @@
 {{--
     Pill button. Becomes a link when href is given.
-    <x-button>Simpan</x-button>
-    <x-button variant="secondary" href="{{ route('home') }}">Batal</x-button>
+    <x-button>Save</x-button>
+    <x-button variant="secondary" href="{{ route('home') }}">Cancel</x-button>
     Variants: primary | secondary | danger | link
 --}}
 @props(['variant' => 'primary', 'href' => null, 'type' => 'submit'])

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 /**
  * Charging sessions for electric cars parked in electric garages.
  *
- * The first full charge is created together with the rent; tenants can request more during the rent.
+ * The first full charge is created together with the rent; renters can request more during the rent.
  * charged_kwh = battery capacity - battery_level_kwh, fee = charged_kwh x price_per_kwh.
  */
 return new class extends Migration

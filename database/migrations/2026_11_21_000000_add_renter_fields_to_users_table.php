@@ -5,10 +5,10 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Adds the role, tenant identity data, and verification status to users.
+ * Adds the role, renter identity data, and verification status to users.
  *
- * - role: admin | tenant (new registrations are always tenant)
- * - nik: 16-digit Indonesian ID number, only filled for tenants
+ * - role: admin | renter (new registrations are always renter)
+ * - nik: 16-digit Indonesian ID number, only filled for renters
  * - verification_status: pending | approved | rejected (set by admin)
  */
 return new class extends Migration
@@ -16,7 +16,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin', 'tenant'])->default('tenant')->after('email');
+            $table->enum('role', ['admin', 'renter'])->default('renter')->after('email');
             $table->char('nik', 16)->nullable()->unique()->after('role');
             $table->string('phone', 15)->nullable()->after('nik');
             $table->enum('verification_status', ['pending', 'approved', 'rejected'])

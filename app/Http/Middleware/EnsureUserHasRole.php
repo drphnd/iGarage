@@ -7,22 +7,28 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Middleware cek peran user.
+ * Allows the request only when the signed-in user has one of the given roles.
  *
- * Pemakaian di route:
- *   ->middleware('role:admin')        hanya admin
- *   ->middleware('role:admin,user')   admin atau user
+ * Usage in routes:
+ *   ->middleware('role:admin')    admins only
+ *   ->middleware('role:renter')   renters only
  *
- * Wajib didaftarkan sebagai alias 'role' di bootstrap/app.php
+ * Registered as the 'role' alias in bootstrap/app.php.
  */
 class EnsureUserHasRole
 {
+    /**
+     * @param  Request  $request
+     * @param  Closure  $next
+     * @param  string  ...$roles  allowed roles
+     * @return Response
+     */
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         $user = $request->user();
 
         if (! $user || ! in_array($user->role, $roles, true)) {
-            abort(403, 'Kamu tidak punya akses ke halaman ini.');
+            abort(403, 'You do not have access to this page.');
         }
 
         return $next($request);

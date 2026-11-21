@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * A tenant's vehicle.
+ * A renter's vehicle.
  *
  * @property int $id
  * @property int $user_id
@@ -44,7 +44,7 @@ class Ride extends Model
     }
 
     /**
-     * The tenant who owns this vehicle.
+     * The renter who owns this vehicle.
      *
      * @return BelongsTo<User, $this>
      */
