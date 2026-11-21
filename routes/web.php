@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\TenantController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -44,4 +45,9 @@ Route::middleware(['auth', 'role:tenant', 'approved'])->group(function () {
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::view('/garages', 'admin.garages.index')->name('garages.index');   // placeholder, replaced later
+
+    // Tenant verification
+    Route::get('/tenants', [TenantController::class, 'index'])->name('tenants.index');
+    Route::patch('/tenants/{tenant}/approve', [TenantController::class, 'approve'])->name('tenants.approve');
+    Route::patch('/tenants/{tenant}/reject', [TenantController::class, 'reject'])->name('tenants.reject');
 });
