@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * A garage rent made by a renter for one vehicle in one garage.
@@ -25,6 +26,17 @@ class Rent extends Model
 {
     public const TYPE_DAILY = 'daily';
     public const TYPE_MONTHLY = 'monthly';
+
+    /** Label shown in the UI for each rent type. */
+    public const TYPE_LABELS = [
+        self::TYPE_DAILY => 'Daily',
+        self::TYPE_MONTHLY => 'Monthly',
+    ];
+
+    /** Derived statuses (not stored). */
+    public const STATUS_UPCOMING = 'upcoming';
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_FINISHED = 'finished';
 
     protected $fillable = [
         'ride_id', 'garage_id', 'rent_type', 'days',
@@ -91,5 +103,70 @@ class Rent extends Model
         $today = today();
 
         return $this->start_date->lte($today) && $this->end_date->gt($today);
+    }
+
+    /**
+     * Status today: upcoming (not started), active (in the garage) or finished (left).
+     *
+     * @return string  one of the STATUS_* constants
+     */
+    public function status(): string
+    {
+        if ($this->start_date->gt(today())) {
+            return self::STATUS_UPCOMING;
+        }
+
+        return $this->isActiveToday() ? self::STATUS_ACTIVE : self::STATUS_FINISHED;
+    }
+
+    /**
+     * Maximum days for a daily rent: days in the start month minus 1 (e.g. 29 in November).
+     * A full month must be rented as monthly.
+     *
+     * @param  Carbon  $start
+     * @return int
+     */
+    public static function maxDailyDays(Carbon $start): int
+    {
+        return $start->daysInMonth - 1;
+    }
+
+    /**
+     * Number of days a rent lasts.
+     * Daily: the days chosen by the renter. Monthly: the number of days in the start month
+     * (21 Nov → 21 Dec is 30 days, 2 Feb → 2 Mar is 28 days).
+     *
+     * @param  string  $rentType  daily | monthly
+     * @param  Carbon  $start
+     * @param  int|null  $days    only used for daily rents
+     * @return int
+     */
+    public static function daysFor(string $rentType, Carbon $start, ?int $days): int
+    {
+        return $rentType === self::TYPE_MONTHLY ? $start->daysInMonth : (int) $days;
+    }
+
+    /**
+     * Rent fee in Rupiah. Daily: days × daily price. Monthly: 25 × daily price.
+     *
+     * @param  string  $rentType  daily | monthly
+     * @param  int  $days
+     * @param  Garage  $garage
+     * @return int
+     */
+    public static function feeFor(string $rentType, int $days, Garage $garage): int
+    {
+        return $rentType === self::TYPE_MONTHLY ? $garage->monthlyPrice() : $days * $garage->daily_price;
+    }
+
+    /**
+     * Total paid for this rent: rent fee + all charging sessions + all extensions.
+     * Load evCharges and rentExtends first to avoid extra queries.
+     *
+     * @return int
+     */
+    public function totalPaid(): int
+    {
+        return $this->rent_fee + $this->evCharges->sum('fee') + $this->rentExtends->sum('amount_due');
     }
 }

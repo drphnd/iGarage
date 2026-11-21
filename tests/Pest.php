@@ -59,3 +59,22 @@ function rentGarage(Garage $garage, string $start, string $end): Rent
         'payment_proof' => 'payment-proofs/test.jpg',
     ]);
 }
+
+/**
+ * Valid form data for renting a garage: a car, daily, from tomorrow for 3 days.
+ * Pass overrides to change any field, e.g. rentPayload($garage, ['days' => 40]).
+ */
+function rentPayload(Garage $garage, array $overrides = []): array
+{
+    return array_merge([
+        'ride_type' => Ride::TYPE_CAR,
+        'rent_type' => Rent::TYPE_DAILY,
+        'start_date' => today()->addDay()->toDateString(),
+        'days' => 3,
+        'plate_number' => 'L 1234 AB',
+        'brand' => 'Toyota',
+        'model' => 'Avanza',
+        'garage_id' => $garage->id,
+        'payment_proof' => \Illuminate\Http\UploadedFile::fake()->image('proof.jpg'),
+    ], $overrides);
+}

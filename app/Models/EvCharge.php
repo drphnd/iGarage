@@ -44,6 +44,30 @@ class EvCharge extends Model
     }
 
     /**
+     * kWh to charge for a full battery, e.g. 60 - 15 = 45. Never negative.
+     *
+     * @param  float  $capacityKwh
+     * @param  float  $levelKwh
+     * @return float
+     */
+    public static function kwhToFull(float $capacityKwh, float $levelKwh): float
+    {
+        return round(max($capacityKwh - $levelKwh, 0), 2);
+    }
+
+    /**
+     * Charging fee in Rupiah: kWh × price per kWh, rounded to whole Rupiah.
+     *
+     * @param  float  $kwh
+     * @param  int  $pricePerKwh
+     * @return int
+     */
+    public static function feeFor(float $kwh, int $pricePerKwh): int
+    {
+        return (int) round($kwh * $pricePerKwh);
+    }
+
+    /**
      * Battery level as a percentage of the car's capacity, e.g. 25.0 for 15 of 60 kWh.
      *
      * @param  float  $capacityKwh

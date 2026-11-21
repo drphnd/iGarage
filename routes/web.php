@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\GarageController;
 use App\Http\Controllers\Admin\RenterController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,7 +37,9 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:renter', 'approved'])->group(function () {
-    Route::view('/my-rents', 'renter.rents.index')->name('my-rents');   // placeholder, replaced later
+    Route::get('/my-rents', [RentController::class, 'index'])->name('my-rents');
+    Route::get('/rents/create', [RentController::class, 'create'])->name('rents.create');
+    Route::post('/rents', [RentController::class, 'store'])->name('rents.store');
 });
 
 /*

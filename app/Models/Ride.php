@@ -24,6 +24,14 @@ class Ride extends Model
     public const TYPE_CAR = 'car';
     public const TYPE_ELECTRIC_CAR = 'electric_car';
 
+    /** Label shown in the UI for each vehicle type. */
+    public const TYPE_LABELS = [
+        self::TYPE_BICYCLE => 'Bicycle',
+        self::TYPE_MOTORCYCLE => 'Motorcycle',
+        self::TYPE_CAR => 'Car',
+        self::TYPE_ELECTRIC_CAR => 'Electric Car',
+    ];
+
     /**
      * Garage types each vehicle type is allowed to park in (business rules from the case study).
      */
