@@ -50,6 +50,11 @@ class AuthController
                 ->onlyInput('email');
         }
 
+        // A rejected renter may not stay signed in.
+        if ($request->user()->verification_status === User::STATUS_REJECTED) {
+            return $this->logoutRejected($request);
+        }
+
         // New session id after login prevents session fixation.
         $request->session()->regenerate();
 
@@ -119,17 +124,28 @@ class AuthController
     }
 
     /**
-     * Show the "waiting for verification" or "rejected" page to renters who are not approved.
+     * The "waiting for verification" page for pending renters. It reloads itself every 10 seconds,
+     * so the renter moves on automatically once the admin approves or rejects.
      *
      * @param  Request  $request
-     * @return View|RedirectResponse  approved users are sent home instead
+     * @return View|RedirectResponse  approved → My Rents, rejected → login page with a warning
      */
     public function verification(Request $request): View|RedirectResponse
     {
         $user = $request->user();
 
-        if ($user->isApproved()) {
+        if ($user->isAdmin()) {
             return redirect()->route('home');
+        }
+
+        // Approved while waiting: go straight to My Rents.
+        if ($user->isApproved()) {
+            return redirect()->route('my-rents')->with('success', 'Your account has been approved. Welcome to iGarage!');
+        }
+
+        // Rejected while waiting: sign out and explain on the login page.
+        if ($user->verification_status === User::STATUS_REJECTED) {
+            return $this->logoutRejected($request);
         }
 
         return view('auth.verification', compact('user'));
@@ -149,6 +165,23 @@ class AuthController
         $request->session()->regenerateToken();
 
         return redirect()->route('login')->with('success', 'You have been logged out.');
+    }
+
+    /**
+     * Sign a rejected renter out and send them to the login page with a warning.
+     *
+     * @param  Request  $request
+     * @return RedirectResponse
+     */
+    private function logoutRejected(Request $request): RedirectResponse
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('error',
+            'Your registration was rejected because your ID card data could not be verified. Please contact the iGarage admin.');
     }
 
     /**

@@ -69,10 +69,37 @@ test('pending renter is blocked and sent to the verification page', function () 
     $this->actingAs($renter)->get(route('account.verification'))->assertOk()->assertSee('being verified');
 });
 
-test('rejected renter sees the rejected message', function () {
+test('a rejected renter is logged out and sent to login with a warning', function () {
     $renter = User::factory()->rejected()->create();
 
-    $this->actingAs($renter)->get(route('account.verification'))->assertOk()->assertSee('was rejected');
+    $this->actingAs($renter)->get(route('account.verification'))
+        ->assertRedirect(route('login'))
+        ->assertSessionHas('error');
+
+    $this->assertGuest();
+});
+
+test('a rejected renter who logs in is logged out again with a warning', function () {
+    User::factory()->rejected()->create(['email' => 'ditolak@example.com']);
+
+    $this->post(route('login'), ['email' => 'ditolak@example.com', 'password' => 'password'])
+        ->assertRedirect(route('login'))
+        ->assertSessionHas('error');
+
+    $this->assertGuest();
+});
+
+test('a pending renter who is approved goes straight to My Rents with a welcome message', function () {
+    $renter = User::factory()->pending()->create();
+
+    $this->actingAs($renter)->get(route('account.verification'))->assertOk();
+
+    $renter->verification_status = User::STATUS_APPROVED;
+    $renter->save();
+
+    $this->actingAs($renter)->get(route('account.verification'))
+        ->assertRedirect(route('my-rents'))
+        ->assertSessionHas('success');
 });
 
 test('approved renter can open My Rents and starts there', function () {
