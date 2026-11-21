@@ -53,7 +53,7 @@ class AdminSeeder extends Seeder
             foreach ($batches as [$type, $count, $dailyPrice, $pricePerKwh]) {
                 for ($i = 1; $i <= $count; $i++) {
                     Garage::create([
-                        'code' => Garage::CODE_PREFIX[$type] . str_pad((string) $i, 3, '0', STR_PAD_LEFT),
+                        'code' => Garage::makeCode($type, $i),
                         'type' => $type,
                         'daily_price' => $dailyPrice,
                         'price_per_kwh' => $pricePerKwh,

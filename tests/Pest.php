@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\Garage;
+use App\Models\Rent;
+use App\Models\Ride;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -8,9 +12,7 @@ use Tests\TestCase;
 | Test Case
 |--------------------------------------------------------------------------
 |
-| The closure you provide to your test functions is always bound to a specific PHPUnit test
-| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "pest()" function to bind different classes or traits.
+| Every Feature test runs on a fresh database (RefreshDatabase) with Vite turned off (TestCase).
 |
 */
 
@@ -20,31 +22,40 @@ pest()->extend(TestCase::class)
 
 /*
 |--------------------------------------------------------------------------
-| Expectations
+| Helpers shared by the tests
 |--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
-
-/*
-|--------------------------------------------------------------------------
-| Functions
-|--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
-*/
-
-function something()
+/**
+ * Create one garage, e.g. makeGarage('car', 1) → C001.
+ */
+function makeGarage(string $type, int $number, int $dailyPrice = 40000, ?int $pricePerKwh = null): Garage
 {
-    // ..
+    return Garage::create([
+        'code' => Garage::makeCode($type, $number),
+        'type' => $type,
+        'daily_price' => $dailyPrice,
+        'price_per_kwh' => $pricePerKwh,
+    ]);
+}
+
+/**
+ * Put a new renter's car in the garage from $start until (not including) $end.
+ */
+function rentGarage(Garage $garage, string $start, string $end): Rent
+{
+    $ride = User::factory()->create()->rides()->create([
+        'type' => Ride::TYPE_CAR, 'plate_number' => 'L 1234 AB', 'brand' => 'Toyota', 'model' => 'Avanza',
+    ]);
+
+    return Rent::create([
+        'ride_id' => $ride->id,
+        'garage_id' => $garage->id,
+        'rent_type' => Rent::TYPE_DAILY,
+        'days' => (int) now()->parse($start)->diffInDays($end),
+        'start_date' => $start,
+        'end_date' => $end,
+        'rent_fee' => $garage->daily_price,
+        'payment_proof' => 'payment-proofs/test.jpg',
+    ]);
 }

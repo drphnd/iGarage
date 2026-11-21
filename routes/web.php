@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\GarageController;
 use App\Http\Controllers\Admin\RenterController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
@@ -44,7 +45,10 @@ Route::middleware(['auth', 'role:renter', 'approved'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::view('/garages', 'admin.garages.index')->name('garages.index');   // placeholder, replaced later
+    // Garages: list with today's status, and bulk create (no edit or delete, not in the case study)
+    Route::get('/garages', [GarageController::class, 'index'])->name('garages.index');
+    Route::get('/garages/create', [GarageController::class, 'create'])->name('garages.create');
+    Route::post('/garages', [GarageController::class, 'store'])->name('garages.store');
 
     // Renter verification
     Route::get('/renters', [RenterController::class, 'index'])->name('renters.index');
