@@ -1,4 +1,4 @@
-git push<?php
+<?php
 
 use App\Models\Garage;
 use App\Models\User;

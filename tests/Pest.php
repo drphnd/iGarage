@@ -12,13 +12,18 @@ use Tests\TestCase;
 | Test Case
 |--------------------------------------------------------------------------
 |
-| Every Feature test runs on a fresh database (RefreshDatabase) with Vite turned off (TestCase).
+| Feature tests: full HTTP requests on a fresh database (RefreshDatabase), Vite turned off (TestCase).
+| Unit tests: one model method at a time. They boot Laravel (for helpers like today())
+| but never touch the database.
 |
 */
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
+
+pest()->extend(TestCase::class)
+    ->in('Unit');
 
 /*
 |--------------------------------------------------------------------------
