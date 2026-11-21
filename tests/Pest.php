@@ -78,3 +78,33 @@ function rentPayload(Garage $garage, array $overrides = []): array
         'payment_proof' => \Illuminate\Http\UploadedFile::fake()->image('proof.jpg'),
     ], $overrides);
 }
+
+/**
+ * Give $renter's electric car (capacity in kWh) a rent in $garage from $start until (not including) $end.
+ */
+function evRent(User $renter, Garage $garage, string $start, string $end, float $capacity = 60): Rent
+{
+    $ride = $renter->rides()->create([
+        'type' => Ride::TYPE_ELECTRIC_CAR, 'plate_number' => 'L 777 EV', 'brand' => 'Hyundai',
+        'model' => 'Ioniq 5', 'battery_capacity_kwh' => $capacity,
+    ]);
+
+    return Rent::create([
+        'ride_id' => $ride->id,
+        'garage_id' => $garage->id,
+        'rent_type' => Rent::TYPE_DAILY,
+        'days' => (int) now()->parse($start)->diffInDays($end),
+        'start_date' => $start,
+        'end_date' => $end,
+        'rent_fee' => $garage->daily_price,
+        'payment_proof' => 'payment-proofs/test.jpg',
+    ]);
+}
+
+/**
+ * A date relative to today as Y-m-d, e.g. day(-1) is yesterday and day(3) is in three days.
+ */
+function day(int $offset): string
+{
+    return today()->addDays($offset)->toDateString();
+}

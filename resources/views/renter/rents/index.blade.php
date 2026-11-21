@@ -50,7 +50,7 @@
 
                         {{-- Period --}}
                         <div>
-                            <p class="text-[12px] text-ink-soft">{{ Rent::TYPE_LABELS[$rent->rent_type] }} · {{ $rent->days }} days</p>
+                            <p class="text-[12px] text-ink-soft">{{ Rent::TYPE_LABELS[$rent->rent_type] }} · {{ $rent->totalDays() }} days</p>
                             <p class="mt-1 text-[15px] font-medium">
                                 {{ $rent->start_date->format('d M Y') }} → {{ $rent->end_date->format('d M Y') }}
                             </p>
@@ -81,9 +81,12 @@
                                 <dt>Total</dt>
                                 <dd><x-money :amount="$rent->totalPaid()" /></dd>
                             </div>
-                            <div class="pt-2 text-right">
+                            <div class="flex items-center justify-end gap-4 pt-3">
                                 <a href="{{ asset('storage/' . $rent->payment_proof) }}" target="_blank"
                                    class="text-[13px] text-accent hover:underline">Payment proof ›</a>
+                                @if ($rent->canRequestCharge())
+                                    <x-button href="{{ route('rents.charges.create', $rent) }}" class="px-4! py-2!">Request Charging</x-button>
+                                @endif
                             </div>
                         </dl>
                     </div>

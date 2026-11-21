@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\GarageController;
+use App\Http\Controllers\Admin\RentExtendController;
 use App\Http\Controllers\Admin\RenterController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EvChargeController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RentController;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +42,10 @@ Route::middleware(['auth', 'role:renter', 'approved'])->group(function () {
     Route::get('/my-rents', [RentController::class, 'index'])->name('my-rents');
     Route::get('/rents/create', [RentController::class, 'create'])->name('rents.create');
     Route::post('/rents', [RentController::class, 'store'])->name('rents.store');
+
+    // Extra charging session for an electric car during an active rent
+    Route::get('/rents/{rent}/charges/create', [EvChargeController::class, 'create'])->name('rents.charges.create');
+    Route::post('/rents/{rent}/charges', [EvChargeController::class, 'store'])->name('rents.charges.store');
 });
 
 /*
@@ -57,4 +63,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/renters', [RenterController::class, 'index'])->name('renters.index');
     Route::patch('/renters/{renter}/approve', [RenterController::class, 'approve'])->name('renters.approve');
     Route::patch('/renters/{renter}/reject', [RenterController::class, 'reject'])->name('renters.reject');
+
+    // Rent extensions (admin only, rents active today)
+    Route::get('/extends', [RentExtendController::class, 'index'])->name('extends.index');
+    Route::get('/rents/{rent}/extend', [RentExtendController::class, 'create'])->name('extends.create');
+    Route::post('/rents/{rent}/extend', [RentExtendController::class, 'store'])->name('extends.store');
 });

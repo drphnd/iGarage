@@ -120,6 +120,44 @@ class Rent extends Model
     }
 
     /**
+     * Whether the renter may request another charging session now:
+     * the rent is active today, the vehicle is an electric car, and the garage has a charger.
+     *
+     * @return bool
+     */
+    public function canRequestCharge(): bool
+    {
+        return $this->isActiveToday() && $this->ride->isElectric() && $this->garage->isElectric();
+    }
+
+    /**
+     * Start date of the next rent in the same garage after this one ends, or null when there is none.
+     * An extension may not go past this date.
+     *
+     * @return Carbon|null
+     */
+    public function nextBookingStart(): ?Carbon
+    {
+        $next = self::where('garage_id', $this->garage_id)
+            ->whereKeyNot($this->id)
+            ->where('start_date', '>=', $this->end_date)
+            ->orderBy('start_date')
+            ->first();
+
+        return $next?->start_date;
+    }
+
+    /**
+     * Number of days from start to end, including any extensions.
+     *
+     * @return int
+     */
+    public function totalDays(): int
+    {
+        return (int) $this->start_date->diffInDays($this->end_date);
+    }
+
+    /**
      * Maximum days for a daily rent: days in the start month minus 1 (e.g. 29 in November).
      * A full month must be rented as monthly.
      *
