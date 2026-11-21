@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\GarageController;
 use App\Http\Controllers\Admin\RentExtendController;
 use App\Http\Controllers\Admin\RenterController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EvChargeController;
 use App\Http\Controllers\HomeController;
@@ -68,4 +69,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/extends', [RentExtendController::class, 'index'])->name('extends.index');
     Route::get('/rents/{rent}/extend', [RentExtendController::class, 'create'])->name('extends.create');
     Route::post('/rents/{rent}/extend', [RentExtendController::class, 'store'])->name('extends.store');
+
+    // Reports: per month in a year or per day in a month, per garage type and per renter
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 });
