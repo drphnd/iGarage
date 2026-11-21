@@ -98,7 +98,7 @@ class RentController
         $garage = Garage::findOrFail($data['garage_id']);
         $rideType = $data['ride_type'];
         $isElectricCar = $rideType === Ride::TYPE_ELECTRIC_CAR;
-        $plate = $rideType === Ride::TYPE_BICYCLE ? null : strtoupper(trim($data['plate_number']));
+        $plate = $rideType === Ride::TYPE_BICYCLE ? null : Ride::normalizePlate($data['plate_number']);
 
         // 1. The vehicle must be allowed in this garage type.
         if (! in_array($garage->type, Ride::ALLOWED_GARAGES[$rideType], true)) {

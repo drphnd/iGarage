@@ -72,6 +72,20 @@ class Ride extends Model
     }
 
     /**
+     * Normalize a plate number so the same plate is always stored the same way:
+     * spaces removed and uppercase, so "l 1231 kk", "L1231KK" and "L 1231 KK" all become "L1231KK".
+     *
+     * @param  string|null  $plate
+     * @return string|null  null when empty
+     */
+    public static function normalizePlate(?string $plate): ?string
+    {
+        $plate = strtoupper(preg_replace('/\s+/', '', (string) $plate));
+
+        return $plate === '' ? null : $plate;
+    }
+
+    /**
      * Whether this vehicle is an electric car.
      *
      * @return bool

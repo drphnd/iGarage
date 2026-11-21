@@ -187,6 +187,35 @@ test('the same vehicle cannot be in two garages at the same time', function () {
         ->and(Ride::count())->toBe(1);   // the vehicle is reused, not registered twice
 });
 
+test('a plate number with or without spaces is the same vehicle', function () {
+    $renter = User::factory()->create();
+    $first = makeGarage(Garage::TYPE_CAR, 1);
+    $second = makeGarage(Garage::TYPE_CAR, 2);
+
+    $this->actingAs($renter)->post(route('rents.store'), rentPayload($first, ['plate_number' => 'L1231KK']))
+        ->assertSessionHasNoErrors();
+    $this->actingAs($renter)->post(route('rents.store'), rentPayload($second, ['plate_number' => 'l 1231 kk']))
+        ->assertSessionHasErrors('plate_number');
+
+    expect(Ride::count())->toBe(1)
+        ->and(Ride::first()->plate_number)->toBe('L1231KK');
+});
+
+test('a vehicle may start a new rent on the day its previous rent ends', function () {
+    $renter = User::factory()->create();
+    $first = makeGarage(Garage::TYPE_CAR, 1);
+    $second = makeGarage(Garage::TYPE_CAR, 2);
+
+    $this->actingAs($renter)->post(route('rents.store'), rentPayload($first, [
+        'start_date' => day(1), 'days' => 2,           // leaves on day 3
+    ]))->assertSessionHasNoErrors();
+    $this->actingAs($renter)->post(route('rents.store'), rentPayload($second, [
+        'start_date' => day(3), 'days' => 2,           // arrives on day 3
+    ]))->assertSessionHasNoErrors();
+
+    expect(Rent::count())->toBe(2);
+});
+
 test('My Rents only shows the rents of the signed-in renter', function () {
     $renter = User::factory()->create();
     $mine = makeGarage(Garage::TYPE_CAR, 1);
