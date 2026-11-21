@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
+ * Builds users for tests. By default an approved tenant.
+ *
+ * User::factory()->create()            approved tenant
+ * User::factory()->pending()->create() tenant waiting for verification
+ * User::factory()->rejected()->create()
+ * User::factory()->admin()->create()
+ *
  * @extends Factory<User>
  */
 class UserFactory extends Factory
@@ -30,7 +37,39 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role' => User::ROLE_TENANT,
+            'nik' => fake()->unique()->numerify('################'),
+            'phone' => fake()->numerify('08##########'),
+            'verification_status' => User::STATUS_APPROVED,
         ];
+    }
+
+    /**
+     * Tenant waiting for admin verification.
+     */
+    public function pending(): static
+    {
+        return $this->state(fn () => ['verification_status' => User::STATUS_PENDING]);
+    }
+
+    /**
+     * Tenant whose registration was rejected.
+     */
+    public function rejected(): static
+    {
+        return $this->state(fn () => ['verification_status' => User::STATUS_REJECTED]);
+    }
+
+    /**
+     * Admin account.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn () => [
+            'role' => User::ROLE_ADMIN,
+            'nik' => null,
+            'phone' => null,
+        ]);
     }
 
     /**

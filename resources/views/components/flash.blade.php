@@ -1,13 +1,8 @@
-{{-- Pesan sukses dari ->with('success', '...') --}}
+{{-- Flash messages from ->with('success', '...') or ->with('error', '...'). --}}
 @if (session('success'))
-    <div class="mb-6 rounded-lg bg-green-100 px-4 py-3 text-sm text-green-800">
-        {{ session('success') }}
-    </div>
+    <div class="mb-8 rounded-2xl bg-ok/10 px-5 py-3.5 text-sm text-ok">{{ session('success') }}</div>
 @endif
 
-{{-- Pesan error dari ->with('error', '...') --}}
 @if (session('error'))
-    <div class="mb-6 rounded-lg bg-red-100 px-4 py-3 text-sm text-red-800">
-        {{ session('error') }}
-    </div>
+    <div class="mb-8 rounded-2xl bg-danger/10 px-5 py-3.5 text-sm text-danger">{{ session('error') }}</div>
 @endif

@@ -1,25 +1,26 @@
-@extends('layouts.app')
+@extends('layouts.guest')
 
-@section('title', 'Login')
+@section('title', 'Masuk')
 
 @section('content')
-    <div class="mx-auto mt-10 max-w-sm rounded-xl bg-white p-6 shadow">
-        <h1 class="mb-6 text-xl font-bold">Login</h1>
+    <x-card class="p-10">
+        <h1 class="text-3xl font-semibold tracking-tight">Masuk ke iGarage.</h1>
+        <p class="mt-2 text-[15px] text-ink-soft">Kelola sewa garasimu dalam satu tempat.</p>
 
-        <form method="POST" action="{{ route('login') }}" class="space-y-4">
+        <form method="POST" action="{{ route('login') }}" class="mt-8 space-y-5">
             @csrf
-            <x-input label="Email" name="email" type="email" required autofocus />
-            <x-input label="Password" name="password" type="password" required />
+            <x-input label="Email" name="email" type="email" autocomplete="email" required autofocus />
+            <x-input label="Password" name="password" type="password" autocomplete="current-password" required />
 
-            <label class="flex items-center gap-2 text-sm">
-                <input type="checkbox" name="remember"> Ingat saya
+            <label class="flex items-center gap-2 text-[13px] text-ink-soft">
+                <input type="checkbox" name="remember" class="size-4 rounded accent-accent"> Ingat saya
             </label>
 
-            <x-button class="w-full">Masuk</x-button>
+            <x-button class="w-full py-3!">Masuk</x-button>
         </form>
+    </x-card>
 
-        <p class="mt-4 text-center text-sm text-gray-600">
-            Belum punya akun? <a href="{{ route('register') }}" class="text-blue-600 hover:underline">Daftar</a>
-        </p>
-    </div>
+    <p class="mt-6 text-center text-[13px] text-ink-soft">
+        Belum punya akun? <a href="{{ route('register') }}" class="text-accent hover:underline">Daftar sebagai tenant ›</a>
+    </p>
 @endsection

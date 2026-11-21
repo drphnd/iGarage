@@ -1,23 +1,33 @@
-@extends('layouts.app')
+@extends('layouts.guest')
 
 @section('title', 'Daftar')
+@section('width', 'max-w-xl')
 
 @section('content')
-    <div class="mx-auto mt-10 max-w-sm rounded-xl bg-white p-6 shadow">
-        <h1 class="mb-6 text-xl font-bold">Daftar Akun</h1>
+    <x-card class="p-10">
+        <h1 class="text-3xl font-semibold tracking-tight">Daftar sebagai tenant.</h1>
+        <p class="mt-2 text-[15px] text-ink-soft">Akunmu akan aktif setelah admin memverifikasi data KTP.</p>
 
-        <form method="POST" action="{{ route('register') }}" class="space-y-4">
+        <form method="POST" action="{{ route('register') }}" class="mt-8 space-y-5">
             @csrf
-            <x-input label="Nama" name="name" required autofocus />
-            <x-input label="Email" name="email" type="email" required />
-            <x-input label="Password (min. 8 karakter)" name="password" type="password" required />
-            <x-input label="Ulangi Password" name="password_confirmation" type="password" required />
+            <x-input label="NIK" name="nik" inputmode="numeric" maxlength="16" hint="16 digit sesuai KTP" required autofocus />
+            <x-input label="Nama lengkap" name="name" autocomplete="name" required />
 
-            <x-button class="w-full">Daftar</x-button>
+            <div class="grid gap-5 sm:grid-cols-2">
+                <x-input label="Nomor telepon" name="phone" type="tel" inputmode="numeric" placeholder="08xxxxxxxxxx" required />
+                <x-input label="Email" name="email" type="email" autocomplete="email" hint="Dipakai untuk login" required />
+            </div>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+                <x-input label="Password" name="password" type="password" autocomplete="new-password" hint="Minimal 8 karakter" required />
+                <x-input label="Ulangi password" name="password_confirmation" type="password" autocomplete="new-password" required />
+            </div>
+
+            <x-button class="w-full py-3!">Daftar</x-button>
         </form>
+    </x-card>
 
-        <p class="mt-4 text-center text-sm text-gray-600">
-            Sudah punya akun? <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Login</a>
-        </p>
-    </div>
+    <p class="mt-6 text-center text-[13px] text-ink-soft">
+        Sudah punya akun? <a href="{{ route('login') }}" class="text-accent hover:underline">Masuk ›</a>
+    </p>
 @endsection

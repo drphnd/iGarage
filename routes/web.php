@@ -1,14 +1,12 @@
 <?php
 
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ItemController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| 1. GUEST: hanya untuk yang BELUM login
+| Guest: only for visitors who are not signed in
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
@@ -21,27 +19,29 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| 2. AUTH: semua user yang SUDAH login (admin & user)
+| Signed in: every role, including tenants that are not approved yet
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
-    Route::get('/', DashboardController::class)->name('dashboard');
+    Route::get('/', HomeController::class)->name('home');
+    Route::get('/verification', [AuthController::class, 'verification'])->name('account.verification');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-    // CRUD contoh: items.index, items.create, items.store, items.show, items.edit, items.update, items.destroy
-    Route::resource('items', ItemController::class);
 });
 
 /*
 |--------------------------------------------------------------------------
-| 3. ADMIN: harus login DAN role = admin
+| Tenant: signed in, role tenant, and approved by an admin
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:admin'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
-        Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
-        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-    });
+Route::middleware(['auth', 'role:tenant', 'approved'])->group(function () {
+    Route::view('/my-rents', 'tenant.rents.index')->name('my-rents');   // placeholder, replaced later
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin: signed in and role admin
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::view('/garages', 'admin.garages.index')->name('garages.index');   // placeholder, replaced later
+});

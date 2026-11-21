@@ -1,18 +1,21 @@
 {{--
-    Pemakaian:
+    Pill button. Becomes a link when href is given.
     <x-button>Simpan</x-button>
-    <x-button variant="danger">Hapus</x-button>
-    <x-button variant="secondary" href="{{ route('items.index') }}">Batal</x-button>   (jadi link)
+    <x-button variant="secondary" href="{{ route('home') }}">Batal</x-button>
+    Variants: primary | secondary | danger | link
 --}}
 @props(['variant' => 'primary', 'href' => null, 'type' => 'submit'])
 
 @php
-    $colors = [
-        'primary' => 'bg-blue-600 text-white hover:bg-blue-700',
-        'danger' => 'bg-red-600 text-white hover:bg-red-700',
-        'secondary' => 'border border-gray-300 bg-white hover:bg-gray-50',
+    $styles = [
+        'primary' => 'bg-accent text-white hover:bg-accent-hover',
+        'secondary' => 'bg-black/5 text-ink hover:bg-black/10',
+        'danger' => 'bg-danger/10 text-danger hover:bg-danger/15',
+        'link' => 'px-0! py-0! text-accent hover:underline',
     ];
-    $class = 'inline-block rounded-lg px-4 py-2 text-sm font-medium ' . ($colors[$variant] ?? $colors['primary']);
+    $class = 'inline-flex items-center justify-center gap-1 rounded-full px-5 py-2.5 text-sm font-medium '
+        . 'transition duration-200 disabled:cursor-not-allowed disabled:opacity-40 '
+        . ($styles[$variant] ?? $styles['primary']);
 @endphp
 
 @if ($href)

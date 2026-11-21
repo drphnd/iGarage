@@ -1,16 +1,21 @@
 {{--
-    Pemakaian:
-    <x-input label="Nama" name="name" />
-    <x-input label="Email" name="email" type="email" :value="$user->email" />
+    Text input with label, hint and validation message.
+    <x-input label="Email" name="email" type="email" required />
+    <x-input label="NIK" name="nik" hint="16 digit sesuai KTP" />
 --}}
-@props(['label', 'name', 'type' => 'text', 'value' => null])
+@props(['label', 'name', 'type' => 'text', 'value' => null, 'hint' => null])
 
 <div>
-    <label for="{{ $name }}" class="mb-1 block text-sm font-medium">{{ $label }}</label>
+    <label for="{{ $name }}" class="mb-1.5 block text-[13px] font-medium">{{ $label }}</label>
     <input id="{{ $name }}" type="{{ $type }}" name="{{ $name }}"
            value="{{ $type === 'password' ? '' : old($name, $value) }}"
-           {{ $attributes->merge(['class' => 'w-full rounded-lg border px-3 py-2 ' . ($errors->has($name) ? 'border-red-500' : 'border-gray-300')]) }}>
+           {{ $attributes->merge(['class' => 'h-12 w-full rounded-xl border bg-canvas px-4 text-[15px] transition duration-200 placeholder:text-ink-soft/60 focus:bg-white focus:outline-none focus:ring-4 '
+               . ($errors->has($name) ? 'border-danger focus:ring-danger/15' : 'border-transparent focus:border-accent focus:ring-accent/15')]) }}>
     @error($name)
-        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+        <p class="mt-1.5 text-[13px] text-danger">{{ $message }}</p>
+    @else
+        @if ($hint)
+            <p class="mt-1.5 text-[13px] text-ink-soft">{{ $hint }}</p>
+        @endif
     @enderror
 </div>
