@@ -37,6 +37,7 @@ Built for the LSP/BNSP **Pemrogram** (Programmer) certification, 21–22 Novembe
 
 | Rule | Detail |
 |---|---|
+| Account | Password: 8–64 characters with an uppercase letter, a lowercase letter, a number and a symbol. Email: a complete address (name@domain.com), saved in lowercase. Name: letters, spaces, dots, apostrophes and dashes. Login is limited to 5 attempts per minute. |
 | Vehicle → garage | Bicycle and motorcycle → bicycle garage (S). Car → car garage (C). Electric car → car garage (C) or electric garage (E). |
 | Daily rent | 1 day up to (days in the start month − 1). Fee = days × daily price. |
 | Monthly rent | Exactly one calendar month (21 Nov → 21 Dec, 2 Feb → 2 Mar). Fee = 25 × daily price. |
@@ -142,7 +143,7 @@ The seeder also creates garages S001–S003 (Rp 10.000/day), C001–C003 (Rp 40.
 php artisan test
 ```
 
-92 automated tests in two groups:
+111 automated tests in two groups:
 
 **Unit tests** (`tests/Unit`) check one model method at a time, without HTTP or database:
 
@@ -158,7 +159,8 @@ php artisan test
 
 | File | Controller | What it checks |
 |---|---|---|
-| `AccountAccessTest` | `AuthController`, `HomeController` | Login, registration, verification block, role-based pages |
+| `AuthTest` | `AuthController` | Login, wrong password, 5-attempt limit, logout, password strength, email format, name format |
+| `AccountAccessTest` | `AuthController`, `HomeController` | Registration, verification block, role-based pages |
 | `RenterVerificationTest` | `Admin\RenterController` | Admin approves or rejects pending renters |
 | `GarageManagementTest` | `Admin\GarageController` | Bulk create, codes, kWh price, 999 limit, derived status, availability |
 | `RentGarageTest` | `RentController` | Renting: dates, daily/monthly rules, clashes, vehicle rules, first charge, uploads |

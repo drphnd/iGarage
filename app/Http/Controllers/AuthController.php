@@ -32,6 +32,9 @@ class AuthController
      */
     public function login(Request $request): RedirectResponse
     {
+        // Same format as when registering, so "Budi@Gmail.com " still finds budi@gmail.com.
+        $request->merge(['email' => $this->normalizeEmail($request->input('email'))]);
+
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
@@ -71,25 +74,38 @@ class AuthController
      */
     public function register(Request $request): RedirectResponse
     {
+        // Clean the input before validating: trimmed name, lowercase email without spaces.
+        $request->merge([
+            'name' => trim((string) $request->input('name')),
+            'email' => $this->normalizeEmail($request->input('email')),
+        ]);
+
         $data = $request->validate([
             'nik' => ['required', 'digits:16', 'unique:users,nik'],
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'min:3', 'max:100', "regex:/^[\pL\s.'-]+$/u"],
             'phone' => ['required', 'regex:/^0[0-9]{9,14}$/'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', 'confirmed', Password::min(8)],
+            // rfc,strict: a valid address by the email standard. The regex also requires a domain ending such as .com.
+            'email' => ['required', 'string', 'max:255', 'email:rfc,strict', 'regex:/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/', 'unique:users,email'],
+            // At least 8 characters with an uppercase letter, a lowercase letter, a number and a symbol.
+            'password' => ['required', 'confirmed', 'max:64', Password::min(8)->mixedCase()->numbers()->symbols()],
         ], [
             'nik.required' => 'NIK is required.',
             'nik.digits' => 'NIK must be exactly 16 digits.',
             'nik.unique' => 'This NIK is already registered.',
             'name.required' => 'Full name is required.',
+            'name.min' => 'Full name must be at least 3 characters.',
+            'name.max' => 'Full name can be at most 100 characters.',
+            'name.regex' => 'Full name may only contain letters, spaces, dots, apostrophes and dashes.',
             'phone.required' => 'Phone number is required.',
             'phone.regex' => 'Phone number must start with 0 and contain 10 to 15 digits.',
             'email.required' => 'Email is required.',
             'email.email' => 'Please enter a valid email address.',
+            'email.regex' => 'Please enter a complete email address, such as name@gmail.com.',
             'email.unique' => 'This email is already registered.',
             'password.required' => 'Password is required.',
             'password.confirmed' => 'Password confirmation does not match.',
             'password.min' => 'Password must be at least 8 characters.',
+            'password.max' => 'Password can be at most 64 characters.',
         ]);
 
         // role (renter) and verification_status (pending) come from the database defaults,
@@ -133,5 +149,16 @@ class AuthController
         $request->session()->regenerateToken();
 
         return redirect()->route('login')->with('success', 'You have been logged out.');
+    }
+
+    /**
+     * Email in one format: spaces removed and lowercase, so the same address is never registered twice.
+     *
+     * @param  mixed  $email
+     * @return string
+     */
+    private function normalizeEmail(mixed $email): string
+    {
+        return strtolower(preg_replace('/\s+/', '', (string) $email));
     }
 }

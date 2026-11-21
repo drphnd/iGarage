@@ -21,8 +21,8 @@ test('valid registration creates a pending renter and shows the verification pag
         'name' => 'Citra Lestari',
         'phone' => '081234567899',
         'email' => 'citra@example.com',
-        'password' => 'password123',
-        'password_confirmation' => 'password123',
+        'password' => 'Rahasia#123',
+        'password_confirmation' => 'Rahasia#123',
     ]);
 
     $response->assertRedirect(route('account.verification'));
@@ -38,8 +38,8 @@ test('registration is rejected when NIK is not 16 digits', function () {
         'name' => 'Citra Lestari',
         'phone' => '081234567899',
         'email' => 'citra@example.com',
-        'password' => 'password123',
-        'password_confirmation' => 'password123',
+        'password' => 'Rahasia#123',
+        'password_confirmation' => 'Rahasia#123',
     ])->assertSessionHasErrors('nik');
 
     expect(User::where('email', 'citra@example.com')->exists())->toBeFalse();
@@ -51,8 +51,8 @@ test('registration cannot make the user an admin', function () {
         'name' => 'Intruder',
         'phone' => '081234567800',
         'email' => 'intruder@example.com',
-        'password' => 'password123',
-        'password_confirmation' => 'password123',
+        'password' => 'Rahasia#123',
+        'password_confirmation' => 'Rahasia#123',
         'role' => 'admin',
         'verification_status' => 'approved',
     ]);
