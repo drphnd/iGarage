@@ -2,10 +2,6 @@
 
 use App\Models\User;
 
-/*
-| Admin verifies renter registrations: approve or reject, only while pending.
-*/
-
 test('admin sees pending renters on the verification page', function () {
     $admin = User::factory()->admin()->create();
     $pending = User::factory()->pending()->create(['name' => 'Adi Pratama']);
@@ -14,7 +10,7 @@ test('admin sees pending renters on the verification page', function () {
     $this->actingAs($admin)->get(route('admin.renters.index'))
         ->assertOk()
         ->assertSee('Adi Pratama')
-        ->assertDontSee('Budi Santoso');   // default filter shows only pending renters
+        ->assertDontSee('Budi Santoso');
 });
 
 test('admin can approve a pending renter, who can then open My Rents', function () {

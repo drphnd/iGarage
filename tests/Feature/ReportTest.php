@@ -4,22 +4,15 @@ use App\Models\Garage;
 use App\Models\Rent;
 use App\Models\User;
 
-/*
-| Admin report: counts, kWh and revenue per period, per garage type and per renter.
-| Helpers makeGarage(), rentGarage(), evRent() and day() live in tests/Pest.php.
-*/
-
 beforeEach(function () {
     $this->admin = User::factory()->admin()->create();
 
-    // Car rent: Rp 40.000, extended by 2 days for Rp 80.000.
     $this->carRent = rentGarage(makeGarage(Garage::TYPE_CAR, 1, 40000), day(0), day(1));
     $this->carRent->rentExtends()->create([
         'old_end_date' => day(1), 'new_end_date' => day(3), 'additional_days' => 2,
         'amount_due' => 80000, 'payment_proof' => 'payment-proofs/test.jpg',
     ]);
 
-    // Electric rent: Rp 50.000 plus two charging sessions (40 kWh + 10 kWh at Rp 2.500).
     $this->evRenter = User::factory()->create(['name' => 'Eva Listrik']);
     $this->evRent = evRent($this->evRenter, makeGarage(Garage::TYPE_ELECTRIC, 1, 50000, 2500), day(0), day(2));
     foreach ([40, 10] as $kwh) {
@@ -29,7 +22,6 @@ beforeEach(function () {
         ]);
     }
 
-    // A rent paid last year must not be counted this year.
     $old = rentGarage(makeGarage(Garage::TYPE_BICYCLE, 1, 10000), day(0), day(1));
     $old->created_at = now()->subYear();
     $old->save();
@@ -41,8 +33,8 @@ test('the yearly report sums rents, kWh and revenue for the year', function () {
         ->assertViewHas('summary', fn ($summary) => $summary['rents'] === 2
             && $summary['renters'] === 2
             && $summary['kwh'] === 50.0
-            && $summary['rent_revenue'] === 170000      // 40.000 + 80.000 + 50.000
-            && $summary['charge_revenue'] === 125000    // 50 kWh × 2.500
+            && $summary['rent_revenue'] === 170000
+            && $summary['charge_revenue'] === 125000
             && $summary['total'] === 295000)
         ->assertViewHas('byPeriod', fn ($rows) => count($rows) === 12
             && $rows[today()->month]['total'] === 295000);

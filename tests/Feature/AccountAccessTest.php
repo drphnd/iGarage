@@ -2,10 +2,6 @@
 
 use App\Models\User;
 
-/*
-| Account access: login, registration, verification block, and role-based start pages.
-*/
-
 test('guest opening the home page is sent to login', function () {
     $this->get('/')->assertRedirect(route('login'));
 });

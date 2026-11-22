@@ -2,11 +2,6 @@ git push<?php
 
 use App\Models\User;
 
-/*
-| Login, logout and the registration rules for password, email and name.
-*/
-
-/** Valid registration data. Pass overrides to change any field. */
 function registerPayload(array $overrides = []): array
 {
     return array_merge([
@@ -20,7 +15,7 @@ function registerPayload(array $overrides = []): array
 }
 
 test('a user can log in with the right email and password', function () {
-    $user = User::factory()->create(['email' => 'budi@example.com']);   // factory password: "password"
+    $user = User::factory()->create(['email' => 'budi@example.com']);
 
     $this->post(route('login'), ['email' => 'budi@example.com', 'password' => 'password'])
         ->assertRedirect(route('home'));
@@ -53,7 +48,7 @@ test('login is blocked for a minute after 5 failed attempts', function () {
     }
 
     $this->post(route('login'), ['email' => 'budi@example.com', 'password' => 'password'])
-        ->assertStatus(429);   // Too Many Requests
+        ->assertStatus(429);
 
     $this->assertGuest();
 });

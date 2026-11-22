@@ -4,11 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-/**
- * Extension history created by the admin. Each row is one extension of a rent.
- *
- * amount_due = additional_days x garage daily price.
- */
 return new class extends Migration
 {
     public function up(): void

@@ -1,7 +1,3 @@
-{{--
-    Dropdown with label and validation message.
-    <x-select label="Garage type" name="type" :options="['car' => 'Car', 'electric' => 'Electric']" placeholder="Choose a type" />
---}}
 @props(['label', 'name', 'options' => [], 'value' => null, 'placeholder' => null, 'hint' => null])
 
 @php $selected = (string) old($name, $value); @endphp

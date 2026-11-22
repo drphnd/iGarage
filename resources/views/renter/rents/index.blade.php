@@ -32,7 +32,6 @@
 
                 <x-card>
                     <div class="flex flex-wrap items-start justify-between gap-6">
-                        {{-- Garage and vehicle --}}
                         <div>
                             <div class="flex items-center gap-3">
                                 <span class="font-mono text-2xl font-semibold">{{ $rent->garage->code }}</span>
@@ -48,7 +47,6 @@
                             <p class="text-[13px] text-ink-soft">{{ Ride::TYPE_LABELS[$rent->ride->type] }}</p>
                         </div>
 
-                        {{-- Period --}}
                         <div>
                             <p class="text-[12px] text-ink-soft">{{ Rent::TYPE_LABELS[$rent->rent_type] }} · {{ $rent->totalDays() }} days</p>
                             <p class="mt-1 text-[15px] font-medium">
@@ -59,7 +57,6 @@
                             @endif
                         </div>
 
-                        {{-- Payment --}}
                         <dl class="min-w-56 text-sm">
                             <div class="flex justify-between gap-6 py-1">
                                 <dt class="text-ink-soft">Rent</dt>

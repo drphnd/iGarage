@@ -23,7 +23,6 @@
                 <x-input label="Confirm password" name="password_confirmation" type="password" autocomplete="new-password" maxlength="64" required />
             </div>
 
-            {{-- Password requirements, ticked live while typing (the server checks them again) --}}
             <ul id="password-rules" class="grid gap-1.5 rounded-2xl bg-canvas px-5 py-4 text-[13px] text-ink-soft sm:grid-cols-2">
                 <li data-rule="length">At least 8 characters</li>
                 <li data-rule="case">Uppercase and lowercase letters</li>

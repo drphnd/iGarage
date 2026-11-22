@@ -1,4 +1,3 @@
-{{-- Error page layout. Stands alone (no navbar, no Vite) so it still renders when something else is broken. --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>

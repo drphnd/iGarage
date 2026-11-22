@@ -7,17 +7,6 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-/*
-|--------------------------------------------------------------------------
-| Test Case
-|--------------------------------------------------------------------------
-|
-| Feature tests: full HTTP requests on a fresh database (RefreshDatabase), Vite turned off (TestCase).
-| Unit tests: one model method at a time. They boot Laravel (for helpers like today())
-| but never touch the database.
-|
-*/
-
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
     ->in('Feature');
@@ -25,15 +14,6 @@ pest()->extend(TestCase::class)
 pest()->extend(TestCase::class)
     ->in('Unit');
 
-/*
-|--------------------------------------------------------------------------
-| Helpers shared by the tests
-|--------------------------------------------------------------------------
-*/
-
-/**
- * Create one garage, e.g. makeGarage('car', 1) → C001.
- */
 function makeGarage(string $type, int $number, int $dailyPrice = 40000, ?int $pricePerKwh = null): Garage
 {
     return Garage::create([
@@ -44,9 +24,6 @@ function makeGarage(string $type, int $number, int $dailyPrice = 40000, ?int $pr
     ]);
 }
 
-/**
- * Put a new renter's car in the garage from $start until (not including) $end.
- */
 function rentGarage(Garage $garage, string $start, string $end): Rent
 {
     $ride = User::factory()->create()->rides()->create([
@@ -65,10 +42,6 @@ function rentGarage(Garage $garage, string $start, string $end): Rent
     ]);
 }
 
-/**
- * Valid form data for renting a garage: a car, daily, from tomorrow for 3 days.
- * Pass overrides to change any field, e.g. rentPayload($garage, ['days' => 40]).
- */
 function rentPayload(Garage $garage, array $overrides = []): array
 {
     return array_merge([
@@ -84,9 +57,6 @@ function rentPayload(Garage $garage, array $overrides = []): array
     ], $overrides);
 }
 
-/**
- * Give $renter's electric car (capacity in kWh) a rent in $garage from $start until (not including) $end.
- */
 function evRent(User $renter, Garage $garage, string $start, string $end, float $capacity = 60): Rent
 {
     $ride = $renter->rides()->create([
@@ -106,9 +76,6 @@ function evRent(User $renter, Garage $garage, string $start, string $end, float 
     ]);
 }
 
-/**
- * A date relative to today as Y-m-d, e.g. day(-1) is yesterday and day(3) is in three days.
- */
 function day(int $offset): string
 {
     return today()->addDays($offset)->toDateString();

@@ -3,11 +3,6 @@
 use App\Models\Garage;
 use App\Models\User;
 
-/*
-| Admin creates garages in bulk and sees every garage with its status today.
-| Helpers makeGarage() and rentGarage() live in tests/Pest.php.
-*/
-
 test('admin sees the garage list with prices', function () {
     $admin = User::factory()->admin()->create();
     makeGarage(Garage::TYPE_CAR, 1, 40000);
@@ -17,7 +12,7 @@ test('admin sees the garage list with prices', function () {
         ->assertOk()
         ->assertSee('C001')
         ->assertSee('E001')
-        ->assertSee('Rp 1.000.000');   // monthly price of C001: 25 × 40.000
+        ->assertSee('Rp 1.000.000');
 });
 
 test('bulk create continues the codes from the last garage of that type', function () {
@@ -95,7 +90,7 @@ test('garage status is derived from rents: in use, booked, or available', functi
 
     rentGarage($inUse, today()->subDay()->toDateString(), today()->addDays(2)->toDateString());
     rentGarage($booked, today()->addDays(5)->toDateString(), today()->addDays(7)->toDateString());
-    rentGarage($finished, today()->subDays(5)->toDateString(), today()->toDateString());   // left today
+    rentGarage($finished, today()->subDays(5)->toDateString(), today()->toDateString());
 
     expect($inUse->statusOn())->toBe(Garage::STATUS_IN_USE)
         ->and($booked->statusOn())->toBe(Garage::STATUS_BOOKED)
@@ -107,9 +102,9 @@ test('availableBetween excludes garages with an overlapping rent', function () {
     $garage = makeGarage(Garage::TYPE_CAR, 1);
     rentGarage($garage, '2026-12-10', '2026-12-15');
 
-    expect(Garage::availableBetween('2026-12-14', '2026-12-16')->count())->toBe(0)   // overlaps the last day
-        ->and(Garage::availableBetween('2026-12-05', '2026-12-10')->count())->toBe(1) // ends when the rent starts
-        ->and(Garage::availableBetween('2026-12-15', '2026-12-20')->count())->toBe(1); // starts when the rent ends
+    expect(Garage::availableBetween('2026-12-14', '2026-12-16')->count())->toBe(0)
+        ->and(Garage::availableBetween('2026-12-05', '2026-12-10')->count())->toBe(1)
+        ->and(Garage::availableBetween('2026-12-15', '2026-12-20')->count())->toBe(1);
 });
 
 test('a renter cannot open or use the garage admin pages', function () {

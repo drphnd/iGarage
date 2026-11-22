@@ -9,30 +9,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
 
-/**
- * Login, renter registration, logout, and the verification (blocked) page.
- */
 class AuthController
 {
-    /**
-     * Show the login form.
-     *
-     * @return View
-     */
     public function showLogin(): View
     {
         return view('auth.login');
     }
 
-    /**
-     * Log a user in with email and password.
-     *
-     * @param  Request  $request
-     * @return RedirectResponse  home on success, back to the form with an error otherwise
-     */
     public function login(Request $request): RedirectResponse
     {
-        // Same format as when registering, so "Budi@Gmail.com " still finds budi@gmail.com.
         $request->merge(['email' => $this->normalizeEmail($request->input('email'))]);
 
         $credentials = $request->validate([
@@ -50,36 +35,22 @@ class AuthController
                 ->onlyInput('email');
         }
 
-        // A rejected renter may not stay signed in.
         if ($request->user()->verification_status === User::STATUS_REJECTED) {
             return $this->logoutRejected($request);
         }
 
-        // New session id after login prevents session fixation.
         $request->session()->regenerate();
 
         return redirect()->intended(route('home'));
     }
 
-    /**
-     * Show the renter registration form.
-     *
-     * @return View
-     */
     public function showRegister(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Register a new renter. The account starts as "pending" until an admin approves it.
-     *
-     * @param  Request  $request
-     * @return RedirectResponse  to the verification page
-     */
     public function register(Request $request): RedirectResponse
     {
-        // Clean the input before validating: trimmed name, lowercase email without spaces.
         $request->merge([
             'name' => trim((string) $request->input('name')),
             'email' => $this->normalizeEmail($request->input('email')),
@@ -89,9 +60,7 @@ class AuthController
             'nik' => ['required', 'digits:16', 'unique:users,nik'],
             'name' => ['required', 'string', 'min:3', 'max:100', "regex:/^[\pL\s.'-]+$/u"],
             'phone' => ['required', 'regex:/^0[0-9]{9,14}$/'],
-            // rfc,strict: a valid address by the email standard. The regex also requires a domain ending such as .com.
             'email' => ['required', 'string', 'max:255', 'email:rfc,strict', 'regex:/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/', 'unique:users,email'],
-            // At least 8 characters with an uppercase letter, a lowercase letter, a number and a symbol.
             'password' => ['required', 'confirmed', 'max:64', Password::min(8)->mixedCase()->numbers()->symbols()],
         ], [
             'nik.required' => 'NIK is required.',
@@ -113,8 +82,6 @@ class AuthController
             'password.max' => 'Password can be at most 64 characters.',
         ]);
 
-        // role (renter) and verification_status (pending) come from the database defaults,
-        // they are not fillable so the form cannot change them.
         $user = User::create($data);
 
         Auth::login($user);
@@ -123,13 +90,6 @@ class AuthController
         return redirect()->route('account.verification');
     }
 
-    /**
-     * The "waiting for verification" page for pending renters. It reloads itself every 10 seconds,
-     * so the renter moves on automatically once the admin approves or rejects.
-     *
-     * @param  Request  $request
-     * @return View|RedirectResponse  approved → My Rents, rejected → login page with a warning
-     */
     public function verification(Request $request): View|RedirectResponse
     {
         $user = $request->user();
@@ -138,12 +98,10 @@ class AuthController
             return redirect()->route('home');
         }
 
-        // Approved while waiting: go straight to My Rents.
         if ($user->isApproved()) {
             return redirect()->route('my-rents')->with('success', 'Your account has been approved. Welcome to iGarage!');
         }
 
-        // Rejected while waiting: sign out and explain on the login page.
         if ($user->verification_status === User::STATUS_REJECTED) {
             return $this->logoutRejected($request);
         }
@@ -151,12 +109,6 @@ class AuthController
         return view('auth.verification', compact('user'));
     }
 
-    /**
-     * Log the user out and invalidate the session.
-     *
-     * @param  Request  $request
-     * @return RedirectResponse  to the login page
-     */
     public function logout(Request $request): RedirectResponse
     {
         Auth::logout();
@@ -167,12 +119,6 @@ class AuthController
         return redirect()->route('login')->with('success', 'You have been logged out.');
     }
 
-    /**
-     * Sign a rejected renter out and send them to the login page with a warning.
-     *
-     * @param  Request  $request
-     * @return RedirectResponse
-     */
     private function logoutRejected(Request $request): RedirectResponse
     {
         Auth::logout();
@@ -184,12 +130,6 @@ class AuthController
             'Your registration was rejected because your ID card data could not be verified. Please contact the iGarage admin.');
     }
 
-    /**
-     * Email in one format: spaces removed and lowercase, so the same address is never registered twice.
-     *
-     * @param  mixed  $email
-     * @return string
-     */
     private function normalizeEmail(mixed $email): string
     {
         return strtolower(preg_replace('/\s+/', '', (string) $email));

@@ -15,7 +15,6 @@
         ];
     @endphp
 
-    {{-- Summary --}}
     <div class="mb-10 grid gap-4 sm:grid-cols-4">
         <x-card class="p-6">
             <p class="text-[13px] text-ink-soft">Total</p>
@@ -29,7 +28,6 @@
         @endforeach
     </div>
 
-    {{-- Type filter --}}
     <div class="mb-6 flex flex-wrap gap-2">
         <a href="{{ route('admin.garages.index') }}"
            class="rounded-full px-4 py-2 text-[13px] font-medium transition duration-200 {{ $type === 'all' ? 'bg-ink text-white' : 'bg-white text-ink-soft hover:text-ink' }}">
@@ -68,7 +66,6 @@
                             @php
                                 $status = $garage->statusOn();
                                 [$color, $label] = $statuses[$status];
-                                // Rent covering today, or the next upcoming one.
                                 $current = $garage->rents->first(fn ($rent) => $rent->start_date->lte(today()));
                                 $next = $garage->rents->first(fn ($rent) => $rent->start_date->gt(today()));
                             @endphp

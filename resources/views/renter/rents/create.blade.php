@@ -16,7 +16,6 @@
     <x-page-header eyebrow="Renter" title="Rent a Garage"
                    subtitle="Choose your vehicle and dates, check which garages are free, then pay and book." />
 
-    {{-- Part 1: period (GET, reloads this page with the available garages) --}}
     <x-card class="p-10">
         <div class="mb-6 flex items-center gap-3">
             <span class="flex size-7 items-center justify-center rounded-full bg-ink text-[13px] font-semibold text-white">1</span>
@@ -41,7 +40,6 @@
     </x-card>
 
     @if ($period)
-        {{-- Part 2: garage, vehicle and payment (POST) --}}
         <x-card class="mt-6 p-10">
             <div class="mb-2 flex items-center gap-3">
                 <span class="flex size-7 items-center justify-center rounded-full bg-ink text-[13px] font-semibold text-white">2</span>
@@ -62,7 +60,6 @@
                     <input type="hidden" name="days" value="{{ $period['days'] }}">
                 @endif
 
-                {{-- Garages --}}
                 <section>
                     <h3 class="mb-4 text-[13px] font-medium">Garage</h3>
 
@@ -105,7 +102,6 @@
                     @enderror
                 </section>
 
-                {{-- Vehicle --}}
                 <section>
                     <h3 class="mb-4 text-[13px] font-medium">Vehicle</h3>
                     <div class="grid gap-5 md:grid-cols-3">
@@ -131,7 +127,6 @@
                     @endif
                 </section>
 
-                {{-- Payment --}}
                 <section>
                     <h3 class="mb-4 text-[13px] font-medium">Payment</h3>
                     <div class="max-w-md">
@@ -155,7 +150,6 @@
     @endif
 
     <script>
-        // Days are only asked for a daily rent. A disabled input is not sent with the form.
         const rentType = document.getElementById('rent_type');
         const startDate = document.getElementById('start_date');
         const daysField = document.getElementById('days-field');
@@ -166,7 +160,6 @@
             daysField.hidden = ! isDaily;
             daysInput.disabled = ! isDaily;
 
-            // Max days = days in the start month - 1 (new Date(year, month, 0) is the last day of that month).
             if (startDate.value) {
                 const [year, month] = startDate.value.split('-').map(Number);
                 daysInput.max = new Date(year, month, 0).getDate() - 1;

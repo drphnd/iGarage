@@ -19,7 +19,6 @@
                 <x-input label="Current battery level (kWh)" name="battery_level_kwh" type="number" step="0.01" min="0"
                          max="{{ $capacity }}" placeholder="20" hint="Battery capacity is {{ $capacity }} kWh" required autofocus />
 
-                {{-- Live estimate, the real fee is calculated again on the server --}}
                 <div class="rounded-2xl bg-canvas px-6 py-5">
                     <div class="flex justify-between text-sm">
                         <span class="text-ink-soft">To charge</span>
@@ -53,7 +52,6 @@
             </form>
         </x-card>
 
-        {{-- Rent and previous sessions --}}
         <x-card class="h-fit p-8">
             <p class="text-[13px] font-medium text-ink-soft">Vehicle</p>
             <p class="mt-1 text-[15px] font-medium">{{ $rent->ride->brand }} {{ $rent->ride->model }}</p>
@@ -72,7 +70,6 @@
     </div>
 
     <script>
-        // Estimate: (capacity - current level) × price per kWh.
         const capacity = {{ $capacity }};
         const price = {{ $price }};
         const levelInput = document.getElementById('battery_level_kwh');

@@ -16,7 +16,6 @@
         <x-button variant="secondary" type="button" onclick="window.print()" class="print:hidden">Print</x-button>
     </x-page-header>
 
-    {{-- Period picker --}}
     <x-card class="mb-10 p-6 print:hidden">
         <div class="flex flex-wrap items-end gap-6">
             <form method="GET" action="{{ route('admin.reports.index') }}" class="flex items-end gap-3">
@@ -44,7 +43,6 @@
         </div>
     </x-card>
 
-    {{-- Summary --}}
     <div class="mb-14 grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
         @foreach ([
             ['Rents', number_format($summary['rents'], 0, ',', '.')],
@@ -70,7 +68,6 @@
         </x-card>
     </div>
 
-    {{-- Per month / per day --}}
     <h2 class="mb-4 text-2xl font-semibold tracking-tight">{{ $mode === 'year' ? 'Per month' : 'Per day' }}</h2>
     <x-card class="mb-14 overflow-hidden p-0">
         <div class="overflow-x-auto">
@@ -107,7 +104,6 @@
         </div>
     </x-card>
 
-    {{-- Per garage type --}}
     <h2 class="mb-4 text-2xl font-semibold tracking-tight">Per garage type</h2>
     <x-card class="mb-14 overflow-hidden p-0">
         <div class="overflow-x-auto">
@@ -140,7 +136,6 @@
         </div>
     </x-card>
 
-    {{-- Per renter --}}
     <h2 class="mb-4 text-2xl font-semibold tracking-tight">Per renter</h2>
     <x-card class="overflow-hidden p-0">
         @if ($byRenter->isEmpty())

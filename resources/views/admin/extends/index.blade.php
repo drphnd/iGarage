@@ -56,7 +56,6 @@
         @endif
     </x-card>
 
-    {{-- History --}}
     @if ($recentExtends->isNotEmpty())
         <h2 class="mt-14 mb-4 text-2xl font-semibold tracking-tight">Recent extensions</h2>
         <x-card class="overflow-hidden p-0">

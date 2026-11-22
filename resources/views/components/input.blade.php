@@ -1,8 +1,3 @@
-{{--
-    Text input with label, hint and validation message.
-    <x-input label="Email" name="email" type="email" required />
-    <x-input label="NIK" name="nik" hint="16 digits, as on your ID card" />
---}}
 @props(['label', 'name', 'type' => 'text', 'value' => null, 'hint' => null])
 
 <div>

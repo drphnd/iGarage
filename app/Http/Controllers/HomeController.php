@@ -5,17 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-/**
- * Sends every signed-in user to the right start page for their role.
- */
 class HomeController
 {
-    /**
-     * Admin → garage list, approved renter → My Rents, other renters → verification page.
-     *
-     * @param  Request  $request
-     * @return RedirectResponse
-     */
     public function __invoke(Request $request): RedirectResponse
     {
         $user = $request->user();

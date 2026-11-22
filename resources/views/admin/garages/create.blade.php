@@ -21,7 +21,6 @@
                              placeholder="40000" hint="Monthly price = 25 × daily price" required />
                 </div>
 
-                {{-- Shown only for electric garages (see the script below). --}}
                 <div id="kwh-field">
                     <x-input label="Price per kWh (Rp)" name="price_per_kwh" type="number" min="1"
                              placeholder="2500" hint="Charging price, electric garages only" />
@@ -34,7 +33,6 @@
             </form>
         </x-card>
 
-        {{-- Next code per type --}}
         <x-card class="h-fit p-8">
             <p class="text-[13px] font-medium text-ink-soft">Next code</p>
             <dl class="mt-4 space-y-4">
@@ -56,7 +54,6 @@
     </div>
 
     <script>
-        // Show the kWh price only for electric garages. A disabled input is not sent with the form.
         const typeSelect = document.getElementById('type');
         const kwhField = document.getElementById('kwh-field');
         const kwhInput = document.getElementById('price_per_kwh');

@@ -1,4 +1,3 @@
-{{-- Shown to renters waiting for verification. Rejected renters are signed out instead (see AuthController). --}}
 @extends('layouts.guest')
 
 @section('title', 'Account Verification')
@@ -30,7 +29,6 @@
     </x-card>
 
     <script>
-        // Reload to ask the server again: approved → My Rents, rejected → login page with a warning.
         setTimeout(() => window.location.reload(), 10000);
     </script>
 @endsection

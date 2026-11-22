@@ -3,10 +3,6 @@
 use App\Models\Garage;
 use App\Models\Ride;
 
-/*
-| Unit tests for the Ride model (no database).
-*/
-
 test('normalizePlate removes spaces and makes the plate uppercase', function () {
     expect(Ride::normalizePlate('l 1231 kk'))->toBe('L1231KK')
         ->and(Ride::normalizePlate('L1231KK'))->toBe('L1231KK')

@@ -1,4 +1,3 @@
-{{-- Layout for login, register and the verification page: one centered card, no navbar. --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>

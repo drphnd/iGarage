@@ -7,13 +7,8 @@ use App\Models\Ride;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
 
-/*
-| Renter rents a garage: availability check, validation, fees, first charge, and My Rents.
-| Helpers makeGarage(), rentGarage() and rentPayload() live in tests/Pest.php.
-*/
-
 beforeEach(function () {
-    Storage::fake('public');   // uploaded files go to a temporary disk
+    Storage::fake('public');
 });
 
 test('the availability check marks garages taken in that period as not available', function () {
@@ -32,7 +27,7 @@ test('the availability check marks garages taken in that period as not available
         ->assertSee('C001')
         ->assertSee('C002')
         ->assertSee('Not available')
-        ->assertDontSee('S001');   // a car cannot use a bicycle garage
+        ->assertDontSee('S001');
 });
 
 test('renter can rent a garage daily and pays days × daily price', function () {
@@ -88,7 +83,7 @@ test('a daily rent cannot be a full month or longer', function () {
 
     $this->actingAs($renter)->post(route('rents.store'), rentPayload($garage, [
         'start_date' => $start->toDateString(),
-        'days' => $start->daysInMonth,   // max is daysInMonth - 1
+        'days' => $start->daysInMonth,
     ]))->assertSessionHasErrors('days');
 
     $this->actingAs($renter)->post(route('rents.store'), rentPayload($garage, [
@@ -102,7 +97,7 @@ test('a garage that is taken in the chosen period cannot be rented', function ()
     $garage = makeGarage(Garage::TYPE_CAR, 1);
     rentGarage($garage, today()->addDays(2)->toDateString(), today()->addDays(6)->toDateString());
 
-    $this->actingAs($renter)->post(route('rents.store'), rentPayload($garage))   // tomorrow + 3 days overlaps
+    $this->actingAs($renter)->post(route('rents.store'), rentPayload($garage))
         ->assertSessionHasErrors('garage_id');
 
     expect(Rent::count())->toBe(1);
@@ -130,8 +125,8 @@ test('an electric car in an electric garage gets a first full charge', function 
     ]))->assertSessionHasNoErrors();
 
     $charge = EvCharge::first();
-    expect($charge->charged_kwh)->toBe(45.0)          // 60 - 15
-        ->and($charge->fee)->toBe(112500)             // 45 × 2.500
+    expect($charge->charged_kwh)->toBe(45.0)
+        ->and($charge->fee)->toBe(112500)
         ->and($charge->price_per_kwh)->toBe(2500)
         ->and(Rent::first()->ride->battery_capacity_kwh)->toBe(60.0);
 });
@@ -184,7 +179,7 @@ test('the same vehicle cannot be in two garages at the same time', function () {
     $this->actingAs($renter)->post(route('rents.store'), rentPayload($second))->assertSessionHasErrors('plate_number');
 
     expect(Rent::count())->toBe(1)
-        ->and(Ride::count())->toBe(1);   // the vehicle is reused, not registered twice
+        ->and(Ride::count())->toBe(1);
 });
 
 test('a plate number with or without spaces is the same vehicle', function () {
@@ -207,10 +202,10 @@ test('a vehicle may start a new rent on the day its previous rent ends', functio
     $second = makeGarage(Garage::TYPE_CAR, 2);
 
     $this->actingAs($renter)->post(route('rents.store'), rentPayload($first, [
-        'start_date' => day(1), 'days' => 2,           // leaves on day 3
+        'start_date' => day(1), 'days' => 2,
     ]))->assertSessionHasNoErrors();
     $this->actingAs($renter)->post(route('rents.store'), rentPayload($second, [
-        'start_date' => day(3), 'days' => 2,           // arrives on day 3
+        'start_date' => day(3), 'days' => 2,
     ]))->assertSessionHasNoErrors();
 
     expect(Rent::count())->toBe(2);
@@ -222,7 +217,7 @@ test('My Rents only shows the rents of the signed-in renter', function () {
     $other = makeGarage(Garage::TYPE_CAR, 2);
 
     $this->actingAs($renter)->post(route('rents.store'), rentPayload($mine));
-    rentGarage($other, today()->toDateString(), today()->addDays(2)->toDateString());   // another renter
+    rentGarage($other, today()->toDateString(), today()->addDays(2)->toDateString());
 
     $this->actingAs($renter)->get(route('my-rents'))
         ->assertOk()

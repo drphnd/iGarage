@@ -10,7 +10,6 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        // Ignore @vite in Blade during tests, so npm run dev / npm run build is not needed
         $this->withoutVite();
     }
 }

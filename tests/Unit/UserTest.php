@@ -2,11 +2,6 @@
 
 use App\Models\User;
 
-/*
-| Unit tests for the User model (no database).
-*/
-
-/** An unsaved user with a role and verification status (both are not fillable on purpose). */
 function userWith(string $role, string $status): User
 {
     $user = new User;

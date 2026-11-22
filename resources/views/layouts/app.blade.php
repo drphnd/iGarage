@@ -1,4 +1,3 @@
-{{-- Layout for signed-in pages: translucent navbar + centered content. --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +10,6 @@
     @php
         $user = auth()->user();
 
-        // Menu per role. Links whose route does not exist yet are skipped automatically.
         $menu = match (true) {
             $user->isAdmin() => [
                 ['label' => 'Garages', 'route' => 'admin.garages.index', 'active' => 'admin.garages.*'],
@@ -33,7 +31,6 @@
 
             <div class="flex items-center gap-6">
                 @foreach ($menu as $link)
-                    @continue(! Route::has($link['route']))
                     <a href="{{ route($link['route']) }}"
                        class="text-[13px] transition duration-200 {{ request()->routeIs($link['active']) ? 'text-ink font-medium' : 'text-ink-soft hover:text-ink' }}">
                         {{ $link['label'] }}

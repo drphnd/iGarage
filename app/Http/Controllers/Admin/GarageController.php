@@ -9,17 +9,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
-/**
- * Admin: list all garages with their status today, and create garages in bulk.
- */
 class GarageController
 {
-    /**
-     * List garages with their derived status for today, optionally filtered by type.
-     *
-     * @param  Request  $request
-     * @return View
-     */
     public function index(Request $request): View
     {
         $type = $request->query('type', 'all');
@@ -28,27 +19,19 @@ class GarageController
             $type = 'all';
         }
 
-        // Only rents that have not ended yet matter for today's status.
         $garages = Garage::with(['rents' => fn ($query) => $query->where('end_date', '>', today())->orderBy('start_date')])
             ->when($type !== 'all', fn ($query) => $query->where('type', $type))
             ->orderBy('type')
             ->orderBy('code')
             ->get();
 
-        // Status counts for the summary row.
         $statusCounts = $garages->countBy(fn (Garage $garage) => $garage->statusOn());
 
-        // Number of garages per type for the filter pills.
         $typeCounts = Garage::selectRaw('type, COUNT(*) as total')->groupBy('type')->pluck('total', 'type');
 
         return view('admin.garages.index', compact('garages', 'type', 'statusCounts', 'typeCounts'));
     }
 
-    /**
-     * Show the bulk create form, with the next code of every type as a preview.
-     *
-     * @return View
-     */
     public function create(): View
     {
         $nextCodes = [];
@@ -64,12 +47,6 @@ class GarageController
         return view('admin.garages.create', compact('nextCodes'));
     }
 
-    /**
-     * Create several garages of one type at once. Codes continue from the last one (C003 → C004, C005, ...).
-     *
-     * @param  Request  $request
-     * @return RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -105,10 +82,8 @@ class GarageController
                 ->withInput();
         }
 
-        // Only electric garages have a charger, so the kWh price is ignored for other types.
         $pricePerKwh = $type === Garage::TYPE_ELECTRIC ? (int) $data['price_per_kwh'] : null;
 
-        // All garages are created, or none (if anything fails halfway).
         DB::transaction(function () use ($type, $quantity, $last, $data, $pricePerKwh) {
             for ($number = $last + 1; $number <= $last + $quantity; $number++) {
                 Garage::create([

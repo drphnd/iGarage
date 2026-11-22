@@ -12,21 +12,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
-/**
- * Admin: extend rents that are active today.
- *
- * The admin picks a new end date and uploads the renter's payment proof.
- *   additional days = new end date - old end date
- *   amount due      = additional days × the garage's daily price
- * An extension is rejected when it would run into the next booking of the same garage.
- */
 class RentExtendController
 {
-    /**
-     * Rents active today (the only ones that can be extended), plus the latest extensions.
-     *
-     * @return View
-     */
     public function index(): View
     {
         $rents = Rent::with(['garage', 'ride.user'])
@@ -43,12 +30,6 @@ class RentExtendController
         return view('admin.extends.index', compact('rents', 'recentExtends'));
     }
 
-    /**
-     * The extension form for one rent.
-     *
-     * @param  Rent  $rent
-     * @return View|RedirectResponse
-     */
     public function create(Rent $rent): View|RedirectResponse
     {
         if (! $rent->isActiveToday()) {
@@ -61,13 +42,6 @@ class RentExtendController
         return view('admin.extends.create', compact('rent', 'maxEndDate'));
     }
 
-    /**
-     * Save the extension: record it in rent_extends and move the rent's end date.
-     *
-     * @param  Request  $request
-     * @param  Rent  $rent
-     * @return RedirectResponse
-     */
     public function store(Request $request, Rent $rent): RedirectResponse
     {
         if (! $rent->isActiveToday()) {
@@ -93,7 +67,6 @@ class RentExtendController
 
         $newEnd = Carbon::parse($data['new_end_date'])->startOfDay();
 
-        // The garage must be free from the old end date until the new end date.
         $garageFree = Garage::availableBetween($oldEnd, $newEnd)->whereKey($rent->garage_id)->exists();
 
         if (! $garageFree) {
@@ -105,7 +78,6 @@ class RentExtendController
             ]);
         }
 
-        // The same vehicle cannot already be booked somewhere else in the extra days.
         $vehicleBusy = Rent::where('ride_id', $rent->ride_id)
             ->whereKeyNot($rent->id)
             ->where('start_date', '<', $newEnd)

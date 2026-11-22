@@ -7,10 +7,6 @@ use App\Models\RentExtend;
 use App\Models\Ride;
 use Illuminate\Support\Carbon;
 
-/*
-| Unit tests for the Rent model (no database).
-*/
-
 test('a daily rent can be at most the days in the start month minus 1', function (string $start, int $max) {
     expect(Rent::maxDailyDays(Carbon::parse($start)))->toBe($max);
 })->with([
@@ -43,7 +39,7 @@ test('status is upcoming, active or finished depending on today', function () {
 
     expect($upcoming->status())->toBe(Rent::STATUS_UPCOMING)
         ->and($active->status())->toBe(Rent::STATUS_ACTIVE)
-        ->and($endsToday->status())->toBe(Rent::STATUS_FINISHED);   // the vehicle leaves on the end date
+        ->and($endsToday->status())->toBe(Rent::STATUS_FINISHED);
 });
 
 test('totalDays counts from start to end, including extensions', function () {
@@ -67,7 +63,7 @@ test('charging can only be requested for an active electric car in an electric g
         ->setRelation('garage', new Garage(['type' => $garageType]));
 
     expect($make(Ride::TYPE_ELECTRIC_CAR, Garage::TYPE_ELECTRIC, -1)->canRequestCharge())->toBeTrue()
-        ->and($make(Ride::TYPE_ELECTRIC_CAR, Garage::TYPE_CAR, -1)->canRequestCharge())->toBeFalse()   // no charger
-        ->and($make(Ride::TYPE_CAR, Garage::TYPE_ELECTRIC, -1)->canRequestCharge())->toBeFalse()       // not electric
-        ->and($make(Ride::TYPE_ELECTRIC_CAR, Garage::TYPE_ELECTRIC, 1)->canRequestCharge())->toBeFalse(); // not started
+        ->and($make(Ride::TYPE_ELECTRIC_CAR, Garage::TYPE_CAR, -1)->canRequestCharge())->toBeFalse()
+        ->and($make(Ride::TYPE_CAR, Garage::TYPE_ELECTRIC, -1)->canRequestCharge())->toBeFalse()
+        ->and($make(Ride::TYPE_ELECTRIC_CAR, Garage::TYPE_ELECTRIC, 1)->canRequestCharge())->toBeFalse();
 });

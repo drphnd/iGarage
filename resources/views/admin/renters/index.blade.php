@@ -20,7 +20,6 @@
         ];
     @endphp
 
-    {{-- Status filter --}}
     <div class="mb-6 flex flex-wrap gap-2">
         @foreach ($filters as $key => $filter)
             <a href="{{ route('admin.renters.index', ['status' => $key]) }}"

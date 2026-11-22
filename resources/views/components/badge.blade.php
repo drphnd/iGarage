@@ -1,8 +1,3 @@
-{{--
-    Small status pill.
-    <x-badge color="green">available</x-badge>
-    Colors: green | orange | red | blue | gray
---}}
 @props(['color' => 'gray'])
 
 @php

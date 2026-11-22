@@ -4,12 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-/**
- * Vehicles owned by renters.
- *
- * plate_number is null for bicycles.
- * battery_capacity_kwh is only filled for electric cars.
- */
 return new class extends Migration
 {
     public function up(): void

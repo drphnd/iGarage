@@ -8,22 +8,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-/**
- * Renter: request another charging session for an electric car during an active rent.
- *
- * The renter only enters the current battery level (kWh). The system charges to full:
- *   charged kWh = battery capacity - current level
- *   fee         = charged kWh × the garage's price per kWh
- */
 class EvChargeController
 {
-    /**
-     * Show the charging form for one of my rents.
-     *
-     * @param  Request  $request
-     * @param  Rent  $rent
-     * @return View|RedirectResponse
-     */
     public function create(Request $request, Rent $rent): View|RedirectResponse
     {
         $this->ensureOwnRent($request, $rent);
@@ -37,13 +23,6 @@ class EvChargeController
         return view('renter.charges.create', compact('rent'));
     }
 
-    /**
-     * Save a charging session with its payment proof.
-     *
-     * @param  Request  $request
-     * @param  Rent  $rent
-     * @return RedirectResponse
-     */
     public function store(Request $request, Rent $rent): RedirectResponse
     {
         $this->ensureOwnRent($request, $rent);
@@ -74,7 +53,7 @@ class EvChargeController
         $rent->evCharges()->create([
             'battery_level_kwh' => $data['battery_level_kwh'],
             'charged_kwh' => $kwh,
-            'price_per_kwh' => $pricePerKwh,   // copied, so a later price change does not alter old sessions
+            'price_per_kwh' => $pricePerKwh,
             'fee' => EvCharge::feeFor($kwh, $pricePerKwh),
             'payment_proof' => $request->file('payment_proof')->store('payment-proofs', 'public'),
         ]);
@@ -83,24 +62,11 @@ class EvChargeController
             "Charging {$kwh} kWh in garage {$rent->garage->code} has been recorded.");
     }
 
-    /**
-     * A renter may only open their own rents. Other rents look like they do not exist (404).
-     *
-     * @param  Request  $request
-     * @param  Rent  $rent
-     * @return void
-     */
     private function ensureOwnRent(Request $request, Rent $rent): void
     {
         abort_unless((int) $rent->ride->user_id === (int) $request->user()->id, 404);
     }
 
-    /**
-     * Explain why charging is not possible for this rent.
-     *
-     * @param  Rent  $rent
-     * @return string
-     */
     private function notAllowedMessage(Rent $rent): string
     {
         return match (true) {

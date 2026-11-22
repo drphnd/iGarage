@@ -14,22 +14,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
-/**
- * Renter: see my rents, and rent a garage.
- *
- * Renting happens on one page in two parts:
- *  1. Choose vehicle type, rent type and dates, then "Check Available Garages" (a GET reload).
- *  2. Pick an available garage, fill in the vehicle, upload the payment proof, and submit (POST).
- * Availability is checked again on submit, in case someone booked the garage in between.
- */
 class RentController
 {
-    /**
-     * My Rents: every rent of the signed-in renter, newest first.
-     *
-     * @param  Request  $request
-     * @return View
-     */
     public function index(Request $request): View
     {
         $rents = $request->user()->rents()
@@ -40,13 +26,6 @@ class RentController
         return view('renter.rents.index', compact('rents'));
     }
 
-    /**
-     * The rent form. When the period is filled in, also lists the garages the vehicle may use,
-     * marking the ones already taken in that period as unavailable.
-     *
-     * @param  Request  $request
-     * @return View
-     */
     public function create(Request $request): View
     {
         $period = null;
@@ -75,12 +54,6 @@ class RentController
         return view('renter.rents.create', compact('period', 'garages'));
     }
 
-    /**
-     * Save a new rent (and the first full charge for an electric car in an electric garage).
-     *
-     * @param  Request  $request
-     * @return RedirectResponse
-     */
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate(array_merge($this->periodRules(), [
@@ -100,7 +73,6 @@ class RentController
         $isElectricCar = $rideType === Ride::TYPE_ELECTRIC_CAR;
         $plate = $rideType === Ride::TYPE_BICYCLE ? null : Ride::normalizePlate($data['plate_number']);
 
-        // 1. The vehicle must be allowed in this garage type.
         if (! in_array($garage->type, Ride::ALLOWED_GARAGES[$rideType], true)) {
             throw ValidationException::withMessages([
                 'garage_id' => 'A ' . strtolower(Ride::TYPE_LABELS[$rideType]) . ' cannot park in a '
@@ -108,7 +80,6 @@ class RentController
             ]);
         }
 
-        // 2. The garage must still be free for the whole period (checked again on save).
         $stillAvailable = Garage::availableBetween($period['start'], $period['end'])->whereKey($garage->id)->exists();
 
         if (! $stillAvailable) {
@@ -117,7 +88,6 @@ class RentController
             ]);
         }
 
-        // 3. The same vehicle cannot be in two garages at the same time.
         if ($plate) {
             $vehicleBusy = Rent::whereHas('ride', fn ($query) => $query->where('user_id', $user->id)->where('plate_number', $plate))
                 ->where('start_date', '<', $period['end'])
@@ -131,11 +101,9 @@ class RentController
             }
         }
 
-        // Stored in storage/app/public/payment-proofs with a random file name.
         $proofPath = $request->file('payment_proof')->store('payment-proofs', 'public');
 
         $rent = DB::transaction(function () use ($user, $data, $period, $garage, $rideType, $isElectricCar, $plate, $proofPath) {
-            // Reuse the renter's vehicle with the same plate number, otherwise register a new one.
             $ride = $plate
                 ? $user->rides()->firstOrNew(['plate_number' => $plate])
                 : $user->rides()->make();
@@ -157,7 +125,6 @@ class RentController
                 'payment_proof' => $proofPath,
             ]);
 
-            // First full charge: only an electric car in an electric garage (a garage with a charger).
             if ($isElectricCar && $garage->isElectric()) {
                 $kwh = EvCharge::kwhToFull((float) $data['battery_capacity_kwh'], (float) $data['battery_level_kwh']);
 
@@ -167,7 +134,7 @@ class RentController
                         'charged_kwh' => $kwh,
                         'price_per_kwh' => $garage->price_per_kwh,
                         'fee' => EvCharge::feeFor($kwh, $garage->price_per_kwh),
-                        'payment_proof' => $proofPath,   // one transfer covers the rent and the first charge
+                        'payment_proof' => $proofPath,
                     ]);
                 }
             }
@@ -179,11 +146,6 @@ class RentController
             "Garage {$garage->code} is booked from {$rent->start_date->format('d M Y')} until {$rent->end_date->format('d M Y')}.");
     }
 
-    /**
-     * Rules for the period part of the form (used by the availability check and by save).
-     *
-     * @return array<string, array<int, mixed>>
-     */
     private function periodRules(): array
     {
         return [
@@ -194,15 +156,6 @@ class RentController
         ];
     }
 
-    /**
-     * Turn the validated input into a period: start, end (exclusive) and number of days.
-     * Also checks the daily limit, which depends on the start month.
-     *
-     * @param  array<string, mixed>  $data
-     * @return array{start: Carbon, end: Carbon, days: int}
-     *
-     * @throws ValidationException  when a daily rent is longer than allowed
-     */
     private function period(array $data): array
     {
         $start = Carbon::parse($data['start_date'])->startOfDay();
@@ -222,11 +175,6 @@ class RentController
         return ['start' => $start, 'end' => $start->copy()->addDays($days), 'days' => $days];
     }
 
-    /**
-     * Validation messages shown to the renter.
-     *
-     * @return array<string, string>
-     */
     private function messages(): array
     {
         return [

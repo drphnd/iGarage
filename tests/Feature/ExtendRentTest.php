@@ -6,20 +6,15 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-/*
-| Admin extends rents that are active today, never into the next booking of the same garage.
-| Helpers makeGarage(), rentGarage() and day() live in tests/Pest.php.
-*/
-
 beforeEach(function () {
     Storage::fake('public');
     $this->admin = User::factory()->admin()->create();
 });
 
 test('the extensions page lists only rents that are active today', function () {
-    rentGarage(makeGarage(Garage::TYPE_CAR, 1), day(-1), day(3));    // active
-    rentGarage(makeGarage(Garage::TYPE_CAR, 2), day(2), day(5));     // upcoming
-    rentGarage(makeGarage(Garage::TYPE_CAR, 3), day(-5), day(0));    // left today
+    rentGarage(makeGarage(Garage::TYPE_CAR, 1), day(-1), day(3));
+    rentGarage(makeGarage(Garage::TYPE_CAR, 2), day(2), day(5));
+    rentGarage(makeGarage(Garage::TYPE_CAR, 3), day(-5), day(0));
 
     $this->actingAs($this->admin)->get(route('admin.extends.index'))
         ->assertOk()
@@ -47,7 +42,6 @@ test('admin extends a rent and the amount is extra days × daily price', functio
 
     Storage::disk('public')->assertExists($extend->payment_proof);
 
-    // The renter sees the extension on My Rents.
     $this->actingAs($rent->ride->user)->get(route('my-rents'))->assertSee('Extension +2 days');
 });
 
@@ -67,7 +61,7 @@ test('the new end date must be after the current end date', function () {
 test('an extension cannot run into the next booking of the same garage', function () {
     $garage = makeGarage(Garage::TYPE_CAR, 1);
     $rent = rentGarage($garage, day(-1), day(3));
-    rentGarage($garage, day(5), day(8));   // next renter arrives in 5 days
+    rentGarage($garage, day(5), day(8));
 
     $this->actingAs($this->admin)->post(route('admin.extends.store', $rent), [
         'new_end_date' => day(6),
@@ -76,7 +70,6 @@ test('an extension cannot run into the next booking of the same garage', functio
 
     expect($rent->fresh()->end_date->toDateString())->toBe(day(3));
 
-    // Up to the day the next renter arrives is fine.
     $this->actingAs($this->admin)->post(route('admin.extends.store', $rent), [
         'new_end_date' => day(5),
         'payment_proof' => UploadedFile::fake()->image('proof.jpg'),

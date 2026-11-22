@@ -4,13 +4,6 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-/**
- * Garage rents made by renters. Resolves the many-to-many between rides and garages.
- *
- * The garage is occupied from start_date until (not including) end_date.
- * end_date is updated by the admin when a rent is extended.
- * rent_fee is stored as a transaction record, so later price changes do not alter it.
- */
 return new class extends Migration
 {
     public function up(): void
@@ -27,7 +20,6 @@ return new class extends Migration
             $table->string('payment_proof');
             $table->timestamps();
 
-            // Speeds up the date-overlap check used for availability and extensions.
             $table->index(['garage_id', 'start_date', 'end_date']);
         });
     }

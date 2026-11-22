@@ -3,11 +3,6 @@
 use App\Models\Garage;
 use App\Models\Rent;
 
-/*
-| Unit tests for the Garage model (no database).
-*/
-
-/** An unsaved rent from $start until (not including) $end, both as day offsets from today. */
 function rentFromTo(int $start, int $end): Rent
 {
     return new Rent(['start_date' => today()->addDays($start), 'end_date' => today()->addDays($end)]);

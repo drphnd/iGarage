@@ -7,16 +7,6 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-/**
- * Demo data for iGarage.
- *
- * Run: php artisan db:seed --class=AdminSeeder
- *
- * Accounts (password: "password"):
- *   admin@igarage.test    admin
- *   renter@igarage.test   renter, approved
- *   pending@igarage.test  renter, waiting for verification
- */
 class AdminSeeder extends Seeder
 {
     public function run(): void
@@ -42,7 +32,6 @@ class AdminSeeder extends Seeder
             $user->save();
         }
 
-        // A few garages of every type, only when none exist yet.
         if (Garage::count() === 0) {
             $batches = [
                 [Garage::TYPE_BICYCLE, 3, 10000, null],

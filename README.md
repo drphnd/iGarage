@@ -84,7 +84,8 @@ Six tables: `users`, `rides` (vehicles), `garages`, `rents`, `rent_extends`, `ev
 |---|---|
 | Use case diagram | [`docs/use-case-igarage.png`](docs/use-case-igarage.png) |
 | Entity relationship diagram | [`docs/erd-igarage.png`](docs/erd-igarage.png) |
-| Class diagram | [`docs/class-diagram-igarage.png`](docs/class-diagram-igarage.png) |
+| Class diagram (models) | [`docs/class-diagram-igarage.png`](docs/class-diagram-igarage.png) |
+| Class diagram (MVC: controllers, middleware, models, views) | [`docs/class-diagram-mvc-igarage.png`](docs/class-diagram-mvc-igarage.png) |
 
 The `.drawio` files next to them can be opened and edited in [diagrams.net](https://app.diagrams.net).
 
@@ -143,7 +144,7 @@ The seeder also creates garages S001–S003 (Rp 10.000/day), C001–C003 (Rp 40.
 php artisan test
 ```
 
-111 automated tests in two groups:
+113 automated tests in two groups:
 
 **Unit tests** (`tests/Unit`) check one model method at a time, without HTTP or database:
 

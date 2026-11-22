@@ -30,7 +30,6 @@
                              :hint="$dateHint"
                              required autofocus />
 
-                    {{-- Live estimate, the real amount is calculated again on the server --}}
                     <div class="rounded-2xl bg-canvas px-6 py-5">
                         <div class="flex justify-between text-sm">
                             <span class="text-ink-soft">Extra days</span>
@@ -64,7 +63,6 @@
                 </form>
 
                 <script>
-                    // Estimate: (new end date - current end date) in days × daily price.
                     const currentEnd = new Date('{{ $rent->end_date->toDateString() }}');
                     const dailyPrice = {{ $dailyPrice }};
                     const newEndInput = document.getElementById('new_end_date');
@@ -82,7 +80,6 @@
             @endif
         </x-card>
 
-        {{-- Current rent --}}
         <x-card class="h-fit p-8">
             <p class="text-[13px] font-medium text-ink-soft">Renter</p>
             <p class="mt-1 text-[15px] font-medium">{{ $rent->ride->user->name }}</p>

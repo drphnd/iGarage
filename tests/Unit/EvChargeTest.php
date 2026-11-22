@@ -2,10 +2,6 @@
 
 use App\Models\EvCharge;
 
-/*
-| Unit tests for the EvCharge model (no database).
-*/
-
 test('kwhToFull is the capacity minus the current level', function () {
     expect(EvCharge::kwhToFull(60, 15))->toBe(45.0)
         ->and(EvCharge::kwhToFull(75.5, 20.25))->toBe(55.25);

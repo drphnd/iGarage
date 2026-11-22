@@ -7,28 +7,10 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * Builds users for tests. By default an approved renter.
- *
- * User::factory()->create()            approved renter
- * User::factory()->pending()->create() renter waiting for verification
- * User::factory()->rejected()->create()
- * User::factory()->admin()->create()
- *
- * @extends Factory<User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
     protected static ?string $password;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
@@ -44,25 +26,16 @@ class UserFactory extends Factory
         ];
     }
 
-    /**
-     * Renter waiting for admin verification.
-     */
     public function pending(): static
     {
         return $this->state(fn () => ['verification_status' => User::STATUS_PENDING]);
     }
 
-    /**
-     * Renter whose registration was rejected.
-     */
     public function rejected(): static
     {
         return $this->state(fn () => ['verification_status' => User::STATUS_REJECTED]);
     }
 
-    /**
-     * Admin account.
-     */
     public function admin(): static
     {
         return $this->state(fn () => [
@@ -72,9 +45,6 @@ class UserFactory extends Factory
         ]);
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [

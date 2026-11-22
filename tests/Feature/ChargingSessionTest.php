@@ -6,11 +6,6 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
-/*
-| Renter requests extra charging sessions for an electric car during an active rent.
-| Helpers makeGarage() and evRent() live in tests/Pest.php.
-*/
-
 beforeEach(function () {
     Storage::fake('public');
     $this->renter = User::factory()->create();
@@ -40,8 +35,8 @@ test('renter can request charging and pays (capacity - current level) × price p
 
     $charge = EvCharge::first();
     expect($charge->rent_id)->toBe($rent->id)
-        ->and($charge->charged_kwh)->toBe(40.0)    // 60 - 20
-        ->and($charge->fee)->toBe(100000);         // 40 × 2.500
+        ->and($charge->charged_kwh)->toBe(40.0)
+        ->and($charge->fee)->toBe(100000);
 
     Storage::disk('public')->assertExists($charge->payment_proof);
 });
